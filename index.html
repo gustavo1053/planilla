@@ -28,72 +28,47 @@
     font-family: 'Rajdhani', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
-    font-size: 14px;
   }
   .header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
+    display: flex; align-items: center; gap: 6px;
+    padding: 8px 14px; background: var(--bg2);
+    border-bottom: 1px solid var(--border); flex-wrap: wrap;
   }
   .logo {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 3px;
-    color: var(--cyan);
-    margin-right: 10px;
-    white-space: nowrap;
+    font-size: 12px; letter-spacing: 3px; color: var(--cyan);
+    margin-right: 10px; white-space: nowrap;
   }
   .tabs-wrap { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
   .tab-btn {
-    padding: 5px 12px;
-    border: 1px solid var(--border);
-    background: var(--bg3);
-    color: var(--muted);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.15s;
-    white-space: nowrap;
+    padding: 5px 12px; border: 1px solid var(--border);
+    background: var(--bg3); color: var(--muted);
+    font-family: 'Rajdhani', sans-serif; font-size: 13px;
+    font-weight: 700; letter-spacing: 1px; cursor: pointer;
+    border-radius: 3px; transition: all 0.15s; white-space: nowrap;
   }
   .tab-btn:hover { border-color: var(--cyan); color: var(--cyan); }
   .tab-btn.active { background: var(--cyan); color: #000; border-color: var(--cyan); }
   .tab-btn.siempre { color: var(--green); border-color: #1a3a1a; }
   .tab-btn.siempre.active { background: var(--green); color: #000; border-color: var(--green); }
-
   .save-status {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    padding: 4px 10px;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    color: var(--muted);
-    white-space: nowrap;
-    margin-left: auto;
+    font-family: 'Share Tech Mono', monospace; font-size: 10px;
+    letter-spacing: 2px; padding: 4px 10px; border-radius: 3px;
+    border: 1px solid var(--border); color: var(--muted);
+    white-space: nowrap; margin-left: auto;
   }
   .save-status.saving { color: var(--yellow); border-color: var(--yellow); }
   .save-status.saved  { color: var(--green);  border-color: var(--green); }
   .save-status.error  { color: var(--red);    border-color: var(--red); }
-  .save-status.loading { color: var(--cyan);  border-color: var(--cyan); }
+  .save-status.loading{ color: var(--cyan);   border-color: var(--cyan); }
 
   .date-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    padding: 7px;
-    background: var(--bg2);
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px; padding: 7px; background: var(--bg2);
     border-bottom: 1px solid var(--border);
   }
-  .date-bar .day-label { font-size: 10px; letter-spacing: 5px; color: var(--muted); text-align: center; }
-  .date-bar .date-txt  { font-family: 'Share Tech Mono', monospace; font-size: 17px; letter-spacing: 4px; }
+  .day-label { font-size: 10px; letter-spacing: 5px; color: var(--muted); text-align: center; }
+  .date-txt  { font-family: 'Share Tech Mono', monospace; font-size: 17px; letter-spacing: 4px; }
   .nav-btn {
     background: none; border: 1px solid var(--border);
     color: var(--text); width: 26px; height: 26px;
@@ -104,141 +79,123 @@
   .nav-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
   .summary-bar {
-    display: flex;
-    background: var(--bg2);
-    border-bottom: 2px solid var(--border);
-    overflow-x: auto;
+    display: flex; background: var(--bg2);
+    border-bottom: 2px solid var(--border); overflow-x: auto;
   }
   .summary-shift {
-    flex: 1; min-width: 160px;
-    padding: 8px 14px;
+    flex: 1; min-width: 160px; padding: 8px 14px;
     border-right: 1px solid var(--border);
   }
   .summary-shift:last-child { border-right: none; }
   .summary-shift.total { border-left: 2px solid var(--cyan); background: rgba(0,229,255,0.03); }
   .s-label { font-size: 10px; letter-spacing: 3px; color: var(--muted); margin-bottom: 4px; }
-  .s-row { display: flex; justify-content: space-between; margin-bottom: 1px; }
-  .s-lbl { font-size: 10px; letter-spacing: 1px; color: var(--muted); }
+  .s-row   { display: flex; justify-content: space-between; margin-bottom: 1px; }
+  .s-lbl   { font-size: 10px; color: var(--muted); }
   .s-green { color: var(--green); font-family: 'Share Tech Mono', monospace; font-size: 13px; }
   .s-red   { color: var(--red);   font-family: 'Share Tech Mono', monospace; font-size: 13px; }
   .s-yel   { color: var(--yellow);font-family: 'Share Tech Mono', monospace; font-size: 13px; }
 
   .shifts-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    min-height: calc(100vh - 185px);
+    display: grid; grid-template-columns: repeat(3,1fr);
   }
-  .shift-panel {
-    border-right: 1px solid var(--border);
-    display: flex; flex-direction: column;
-  }
+  .shift-panel { border-right: 1px solid var(--border); display: flex; flex-direction: column; }
   .shift-panel:last-child { border-right: none; }
 
   .shift-header {
-    display: flex; align-items: center;
-    justify-content: space-between;
-    padding: 9px 13px;
-    font-size: 13px; font-weight: 700; letter-spacing: 3px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 13px; font-size: 14px; font-weight: 700; letter-spacing: 3px;
   }
   .shift-header.morning   { background: var(--morning); }
   .shift-header.afternoon { background: var(--afternoon); }
   .shift-header.night     { background: var(--night); }
 
   .operator-row {
-    display: flex; align-items: center;
-    padding: 7px 12px; gap: 8px;
-    background: var(--bg3);
-    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; padding: 7px 10px; gap: 8px;
+    background: var(--bg3); border-bottom: 1px solid var(--border);
   }
   .op-input {
-    background: transparent; border: none;
-    color: var(--text); font-family: 'Rajdhani', sans-serif;
-    font-weight: 700; font-size: 14px; letter-spacing: 1px;
-    flex: 1; outline: none; text-transform: uppercase;
+    background: transparent; border: none; color: var(--text);
+    font-family: 'Rajdhani', sans-serif; font-weight: 700;
+    font-size: 16px; flex: 1; outline: none; text-transform: uppercase;
   }
   .op-input::placeholder { color: var(--muted); }
   .bon-group {
-    display: flex; align-items: center; gap: 5px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid var(--border);
-    border-radius: 3px; padding: 3px 7px;
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+    border-radius: 3px; padding: 2px 6px;
   }
   .bon-lbl { font-size: 10px; letter-spacing: 2px; color: var(--muted); white-space: nowrap; }
   .bon-input {
-    background: transparent; border: none;
-    color: var(--yellow); font-family: 'Share Tech Mono', monospace;
-    font-size: 12px; width: 75px; outline: none; text-align: right;
+    background: transparent; border: none; color: var(--yellow);
+    font-family: 'Share Tech Mono', monospace; font-size: 15px;
+    width: 80px; outline: none; text-align: right;
   }
 
+  /* COLS HEADER */
   .cols-header {
-    display: grid; grid-template-columns: 18px 1fr 1fr;
-    background: rgba(0,0,0,0.4);
-    border-bottom: 1px solid var(--border);
+    display: grid; grid-template-columns: 14px 1fr 1fr;
+    background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border);
   }
-  .cols-header div { text-align: center; padding: 3px; font-size: 11px; letter-spacing: 2px; font-weight: 700; }
+  .cols-header > div { text-align: center; padding: 4px 2px; font-size: 11px; letter-spacing: 2px; font-weight: 700; }
   .ch-dep { color: var(--green); border-right: 1px solid var(--border); }
   .ch-ret { color: var(--red); }
 
+  /* TOTALS BAR arriba de filas */
   .col-totals-bar {
-    display: grid; grid-template-columns: 18px 1fr 1fr;
-    background: rgba(0,0,0,0.55);
-    border-bottom: 2px solid var(--border);
+    display: grid; grid-template-columns: 14px 1fr 1fr;
+    background: rgba(0,0,0,0.65);
+    border-bottom: 2px solid var(--cyan);
   }
-  .col-totals-bar div { text-align: right; padding: 4px 6px; font-family: 'Share Tech Mono', monospace; font-size: 14px; font-weight: 700; }
+  .col-totals-bar > div { padding: 6px 8px; font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: 700; text-align: right; }
   .ct-dep { color: var(--green); border-right: 1px solid var(--border); }
   .ct-ret { color: var(--red); }
 
-  .rows-area { flex: 1; overflow-y: auto; max-height: 620px; }
+  /* ROWS */
+  .rows-area { overflow-y: auto; max-height: 700px; }
   .rows-area::-webkit-scrollbar { width: 3px; }
   .rows-area::-webkit-scrollbar-track { background: var(--bg2); }
-  .rows-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .rows-area::-webkit-scrollbar-thumb { background: var(--border); }
 
   .data-row {
-    display: grid; grid-template-columns: 18px 1fr 1fr;
-    align-items: center;
-    border-bottom: 1px solid rgba(30,34,53,0.4);
+    display: grid; grid-template-columns: 14px 1fr 1fr;
+    align-items: center; border-bottom: 1px solid rgba(30,34,53,0.4);
   }
-  .data-row:hover { background: rgba(255,255,255,0.02); }
-  .row-num { text-align: center; font-size: 9px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+  .data-row:hover { background: rgba(255,255,255,0.025); }
+  .row-num { text-align: center; font-size: 8px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
+
   .cell-input {
     background: transparent; border: none;
-    padding: 4px 6px; font-family: 'Share Tech Mono', monospace;
-    font-size: 15px; outline: none; text-align: right; width: 100%;
+    padding: 5px 8px; font-family: 'Share Tech Mono', monospace;
+    font-size: 16px; outline: none; text-align: right; width: 100%;
   }
   .cell-input.dep { color: var(--green); border-right: 1px solid var(--border); }
   .cell-input.ret { color: var(--red); }
-  .cell-input::placeholder { color: rgba(74,82,112,0.35); }
+  .cell-input::placeholder { color: rgba(74,82,112,0.3); }
   .cell-input:focus { background: rgba(255,255,255,0.03); }
 
+  /* FOOTER */
   .shift-footer {
     border-top: 1px solid var(--border);
-    background: rgba(0,0,0,0.45); padding: 8px 13px;
+    background: rgba(0,0,0,0.5); padding: 8px 12px;
   }
   .footer-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
-  .ft { text-align: right; font-family: 'Share Tech Mono', monospace; font-size: 13px; padding: 3px 5px; border-radius: 2px; }
+  .ft { text-align: right; font-family: 'Share Tech Mono', monospace; font-size: 15px; padding: 3px 5px; }
   .ft.dep { color: var(--green); }
   .ft.ret { color: var(--red); }
   .neto-box {
-    text-align: center; padding: 5px; background: rgba(0,0,0,0.3);
+    text-align: center; padding: 6px; background: rgba(0,0,0,0.3);
     border-radius: 3px; border: 1px solid var(--border);
   }
-  .neto-formula-txt { color: var(--muted); font-size: 9px; letter-spacing: 1px; margin-bottom: 2px; }
-  .neto-val { font-family: 'Share Tech Mono', monospace; font-size: 15px; font-weight: 700; }
+  .neto-formula-txt { color: var(--muted); font-size: 10px; letter-spacing: 1px; margin-bottom: 2px; }
+  .neto-val { font-family: 'Share Tech Mono', monospace; font-size: 17px; font-weight: 700; }
 
   .overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 1000; display: none;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
   }
   .overlay.show { display: flex; }
-  .overlay-box {
-    background: var(--bg2); border: 1px solid var(--cyan);
-    border-radius: 6px; padding: 28px 36px; text-align: center;
-  }
-  .overlay-box .spin {
-    font-size: 28px; display: block; margin-bottom: 12px;
-    animation: spin 1s linear infinite;
-  }
+  .overlay-box { background: var(--bg2); border: 1px solid var(--cyan); border-radius: 6px; padding: 28px 36px; text-align: center; }
+  .overlay-box .spin { font-size: 28px; display: block; margin-bottom: 12px; animation: spin 1s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .overlay-box p { color: var(--cyan); font-family: 'Share Tech Mono', monospace; letter-spacing: 2px; font-size: 13px; }
 
@@ -260,12 +217,12 @@
   <button class="nav-btn" onclick="changeDate(-1)">◀</button>
   <div style="text-align:center">
     <div class="day-label" id="dayLabel"></div>
-    <div class="date-txt" id="dateTxt"></div>
+    <div class="date-txt"  id="dateTxt"></div>
   </div>
   <button class="nav-btn" onclick="changeDate(1)">▶</button>
 </div>
 
-<div class="summary-bar" id="summaryBar"></div>
+<div class="summary-bar"     id="summaryBar"></div>
 <div class="shifts-container" id="shiftsContainer"></div>
 
 <div class="overlay" id="overlay">
@@ -275,9 +232,8 @@
   </div>
 </div>
 
-<!-- Firebase -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -289,8 +245,8 @@ const firebaseConfig = {
   appId: "1:179047310261:web:2e5ad044d98751985d2ffc"
 };
 
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const fbApp = initializeApp(firebaseConfig);
+const db    = getFirestore(fbApp);
 
 const TABS   = ['AGE 18','AGE 19','AGE 20','AGE 22','AGE 23','AGE 24','AGE 25','SIEMPRE MONO'];
 const SHIFTS = [
@@ -298,21 +254,18 @@ const SHIFTS = [
   { key:'afternoon', label:'TARDE',  icon:'🔆', cls:'afternoon' },
   { key:'night',     label:'NOCHE',  icon:'🌙', cls:'night'     },
 ];
-const ROWS = 70;
+const ROWS    = 70;
 const DAYS_ES = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
 
 let currentTab  = TABS[0];
 let currentDate = new Date(); currentDate.setHours(0,0,0,0);
-
-// in-memory cache: cache[tab][dateKey][shiftKey] = { deps, rets, bon, op }
 const cache = {};
 
 function dateKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-function docId(tab, date) {
-  return `${tab.replace(/ /g,'_')}__${dateKey(date)}`;
-}
+function docId(tab, date) { return `${tab.replace(/ /g,'_')}__${dateKey(date)}`; }
+
 function setStatus(type, msg) {
   const el = document.getElementById('saveStatus');
   el.className = 'save-status ' + type;
@@ -327,36 +280,33 @@ function fmt(n) {
 function parseNum(s) {
   if (!s && s!==0) return 0;
   const n = parseFloat(String(s).replace(/\./g,'').replace(',','.'));
-  return isNaN(n)?0:n;
+  return isNaN(n) ? 0 : n;
 }
 
-// ── FIREBASE LOAD ──
 async function loadFromFirebase(tab, date) {
-  const id  = docId(tab, date);
-  const dk  = dateKey(date);
+  const dk = dateKey(date);
   if (!cache[tab]) cache[tab] = {};
-  if (cache[tab][dk]) return; // already loaded
+  if (cache[tab][dk] !== undefined) return;
   try {
-    const snap = await getDoc(doc(db, 'planilla', id));
+    const snap = await getDoc(doc(db,'planilla', docId(tab,date)));
     cache[tab][dk] = snap.exists() ? snap.data() : {};
   } catch(e) {
     cache[tab][dk] = {};
-    setStatus('error','✗ ERROR DE CONEXIÓN');
+    setStatus('error','✗ SIN CONEXIÓN');
   }
 }
 
-// ── FIREBASE SAVE (debounced) ──
 let saveTimer = null;
 function scheduleSave() {
   setStatus('saving','… GUARDANDO');
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(()=>doSave(), 1000);
+  saveTimer = setTimeout(doSave, 1000);
 }
 async function doSave() {
-  const dk = dateKey(currentDate);
+  const dk   = dateKey(currentDate);
   const data = cache[currentTab]?.[dk] || {};
   try {
-    await setDoc(doc(db,'planilla', docId(currentTab, currentDate)), data);
+    await setDoc(doc(db,'planilla', docId(currentTab,currentDate)), data);
     setStatus('saved','✓ GUARDADO');
   } catch(e) {
     setStatus('error','✗ ERROR AL GUARDAR');
@@ -369,12 +319,11 @@ function getCacheVal(shift, field, def) {
 }
 function setCacheVal(shift, field, val) {
   const dk = dateKey(currentDate);
-  if (!cache[currentTab]) cache[currentTab]={};
-  if (!cache[currentTab][dk]) cache[currentTab][dk]={};
+  if (!cache[currentTab])     cache[currentTab]     = {};
+  if (!cache[currentTab][dk]) cache[currentTab][dk] = {};
   cache[currentTab][dk][`${shift}_${field}`] = val;
 }
 
-// ── TABS ──
 function renderTabs() {
   const c = document.getElementById('tabs');
   c.innerHTML = '';
@@ -387,24 +336,22 @@ function renderTabs() {
   });
 }
 
-// ── DATE ──
 function renderDate() {
-  const d = currentDate;
+  const d  = currentDate;
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
   document.getElementById('dayLabel').textContent = DAYS_ES[d.getDay()];
-  const dd=String(d.getDate()).padStart(2,'0');
-  const mm=String(d.getMonth()+1).padStart(2,'0');
-  document.getElementById('dateTxt').textContent = `${dd} / ${mm} / ${d.getFullYear()}`;
+  document.getElementById('dateTxt').textContent  = `${dd} / ${mm} / ${d.getFullYear()}`;
 }
 window.changeDate = async function(delta) {
   currentDate = new Date(currentDate.getTime() + delta*86400000);
   await renderAll();
 };
 
-// ── SUMMARY ──
 function renderSummary() {
   const bar = document.getElementById('summaryBar');
   bar.innerHTML = '';
-  let tdep=0,tret=0,tbon=0;
+  let tdep=0, tret=0, tbon=0;
   SHIFTS.forEach(sh => {
     const deps = getCacheVal(sh.key,'dep', Array(ROWS).fill(''));
     const rets = getCacheVal(sh.key,'ret', Array(ROWS).fill(''));
@@ -414,18 +361,18 @@ function renderSummary() {
     const neto = dep-ret-bon;
     tdep+=dep; tret+=ret; tbon+=bon;
     const div = document.createElement('div');
-    div.className='summary-shift';
-    div.innerHTML=`
+    div.className = 'summary-shift';
+    div.innerHTML = `
       <div class="s-label">${sh.label}</div>
       <div class="s-row"><span class="s-lbl">DEP</span><span class="s-green">${fmt(dep)||'0,00'}</span></div>
       <div class="s-row"><span class="s-lbl">RET</span><span class="s-red">${fmt(ret)||'0,00'}</span></div>
       <div class="s-row"><span class="s-lbl">NETO</span><span class="s-yel">${fmt(neto)||'0,00'}</span></div>`;
     bar.appendChild(div);
   });
-  const tn = tdep-tret-tbon;
+  const tn  = tdep-tret-tbon;
   const tot = document.createElement('div');
-  tot.className='summary-shift total';
-  tot.innerHTML=`
+  tot.className = 'summary-shift total';
+  tot.innerHTML = `
     <div class="s-label" style="color:var(--cyan)">TOTAL DÍA</div>
     <div class="s-row"><span class="s-lbl">DEP</span><span class="s-green">${fmt(tdep)||'0,00'}</span></div>
     <div class="s-row"><span class="s-lbl">RET</span><span class="s-red">${fmt(tret)||'0,00'}</span></div>
@@ -433,101 +380,96 @@ function renderSummary() {
   bar.appendChild(tot);
 }
 
-// ── SHIFT PANEL ──
 function buildShiftPanel(sh) {
-  const deps = getCacheVal(sh.key,'dep', Array(ROWS).fill('')).slice(0,ROWS);
-  const rets = getCacheVal(sh.key,'ret', Array(ROWS).fill('')).slice(0,ROWS);
+  const deps = getCacheVal(sh.key,'dep', Array(ROWS).fill('')).slice();
+  const rets = getCacheVal(sh.key,'ret', Array(ROWS).fill('')).slice();
   const bon  = getCacheVal(sh.key,'bon','');
   const op   = getCacheVal(sh.key,'op','');
-
-  while(deps.length<ROWS) deps.push('');
-  while(rets.length<ROWS) rets.push('');
+  while(deps.length < ROWS) deps.push('');
+  while(rets.length < ROWS) rets.push('');
 
   const panel = document.createElement('div');
-  panel.className='shift-panel';
+  panel.className = 'shift-panel';
 
-  // header
-  panel.innerHTML=`
-    <div class="shift-header ${sh.cls}">
-      <span>${sh.icon}</span>
-      <span>${sh.label}</span>
-      <span></span>
-    </div>`;
+  // HEADER
+  const hdr = document.createElement('div');
+  hdr.className = `shift-header ${sh.cls}`;
+  hdr.innerHTML = `<span>${sh.icon}</span><span>${sh.label}</span><span></span>`;
+  panel.appendChild(hdr);
 
-  // operator row
-  const opRow = document.createElement('div');
-  opRow.className='operator-row';
-  const opEl = document.createElement('input');
+  // OPERATOR + BON
+  const opRow = document.createElement('div'); opRow.className='operator-row';
+  const opEl  = document.createElement('input');
   opEl.className='op-input'; opEl.placeholder='OPERADOR'; opEl.value=op;
   opEl.addEventListener('input',()=>{ setCacheVal(sh.key,'op',opEl.value); scheduleSave(); });
-
-  const bonG = document.createElement('div'); bonG.className='bon-group';
-  bonG.innerHTML='<span class="bon-lbl">BON</span>';
+  const bonG  = document.createElement('div'); bonG.className='bon-group';
+  bonG.innerHTML = '<span class="bon-lbl">BON</span>';
   const bonEl = document.createElement('input');
   bonEl.className='bon-input'; bonEl.placeholder='0'; bonEl.value=bon;
   bonEl.addEventListener('input',()=>{
     setCacheVal(sh.key,'bon',bonEl.value);
-    updateFooter(); renderSummary(); scheduleSave();
+    updateTotals(); renderSummary(); scheduleSave();
   });
   bonG.appendChild(bonEl);
   opRow.appendChild(opEl); opRow.appendChild(bonG);
   panel.appendChild(opRow);
 
-  // cols header
+  // COLS HEADER
   const colsH = document.createElement('div'); colsH.className='cols-header';
   colsH.innerHTML='<div></div><div class="ch-dep">DEPÓSITOS</div><div class="ch-ret">RETIROS</div>';
   panel.appendChild(colsH);
 
-  // col totals bar (above rows)
-  const colTotBar = document.createElement('div'); colTotBar.className='col-totals-bar';
-  const ctNum = document.createElement('div');
+  // TOTALS BAR (arriba de las filas)
+  const ctBar = document.createElement('div'); ctBar.className='col-totals-bar';
+  const ctSpc = document.createElement('div');
   const ctDep = document.createElement('div'); ctDep.className='ct-dep'; ctDep.textContent='0,00';
   const ctRet = document.createElement('div'); ctRet.className='ct-ret'; ctRet.textContent='0,00';
-  colTotBar.appendChild(ctNum); colTotBar.appendChild(ctDep); colTotBar.appendChild(ctRet);
-  panel.appendChild(colTotBar);
+  ctBar.appendChild(ctSpc); ctBar.appendChild(ctDep); ctBar.appendChild(ctRet);
+  panel.appendChild(ctBar);
 
-  // rows
-  const rowsArea = document.createElement('div'); rowsArea.className='rows-area';
-  const depInputs=[], retInputs=[];
+  // ROWS
+  const rowsArea  = document.createElement('div'); rowsArea.className='rows-area';
+  const depInputs = [];
+  const retInputs = [];
 
-  for(let i=0;i<ROWS;i++){
-    const row=document.createElement('div'); row.className='data-row';
-    const num=document.createElement('div'); num.className='row-num'; num.textContent=i+1;
+  for (let i = 0; i < ROWS; i++) {
+    const row = document.createElement('div'); row.className='data-row';
+    const num = document.createElement('div'); num.className='row-num'; num.textContent=i+1;
 
-    const dEl=document.createElement('input');
+    const dEl = document.createElement('input');
     dEl.className='cell-input dep'; dEl.type='text'; dEl.inputMode='decimal';
     dEl.placeholder='0'; dEl.value=deps[i]||'';
     dEl.addEventListener('input',()=>{
       deps[i]=dEl.value;
       setCacheVal(sh.key,'dep',[...deps]);
-      updateFooter(); renderSummary(); scheduleSave();
+      updateTotals(); renderSummary(); scheduleSave();
     });
     dEl.addEventListener('paste',(e)=>{
       e.preventDefault();
-      const text = (e.clipboardData||window.clipboardData).getData('text');
-      const values = text.split(/[\n\r\t]+/).map(v=>v.trim()).filter(v=>v!=='');
-      if(values.length<=1){ dEl.value=values[0]||''; deps[i]=dEl.value; setCacheVal(sh.key,'dep',[...deps]); updateFooter(); renderSummary(); scheduleSave(); return; }
-      values.forEach((v,offset)=>{ const idx=i+offset; if(idx<ROWS){ depInputs[idx].value=v; deps[idx]=v; } });
-      setCacheVal(sh.key,'dep',[...deps]); updateFooter(); renderSummary(); scheduleSave();
-      if(i+values.length<ROWS) depInputs[i+values.length].focus();
+      const text   = (e.clipboardData||window.clipboardData).getData('text');
+      const values = text.split(/[\n\r]+/).map(v=>v.trim()).filter(v=>v!=='');
+      values.forEach((v,off)=>{ const idx=i+off; if(idx<ROWS){ depInputs[idx].value=v; deps[idx]=v; }});
+      setCacheVal(sh.key,'dep',[...deps]);
+      updateTotals(); renderSummary(); scheduleSave();
+      const next=i+values.length; if(next<ROWS) depInputs[next].focus();
     });
 
-    const rEl=document.createElement('input');
+    const rEl = document.createElement('input');
     rEl.className='cell-input ret'; rEl.type='text'; rEl.inputMode='decimal';
     rEl.placeholder='0'; rEl.value=rets[i]||'';
     rEl.addEventListener('input',()=>{
       rets[i]=rEl.value;
       setCacheVal(sh.key,'ret',[...rets]);
-      updateFooter(); renderSummary(); scheduleSave();
+      updateTotals(); renderSummary(); scheduleSave();
     });
     rEl.addEventListener('paste',(e)=>{
       e.preventDefault();
-      const text = (e.clipboardData||window.clipboardData).getData('text');
-      const values = text.split(/[\n\r\t]+/).map(v=>v.trim()).filter(v=>v!=='');
-      if(values.length<=1){ rEl.value=values[0]||''; rets[i]=rEl.value; setCacheVal(sh.key,'ret',[...rets]); updateFooter(); renderSummary(); scheduleSave(); return; }
-      values.forEach((v,offset)=>{ const idx=i+offset; if(idx<ROWS){ retInputs[idx].value=v; rets[idx]=v; } });
-      setCacheVal(sh.key,'ret',[...rets]); updateFooter(); renderSummary(); scheduleSave();
-      if(i+values.length<ROWS) retInputs[i+values.length].focus();
+      const text   = (e.clipboardData||window.clipboardData).getData('text');
+      const values = text.split(/[\n\r]+/).map(v=>v.trim()).filter(v=>v!=='');
+      values.forEach((v,off)=>{ const idx=i+off; if(idx<ROWS){ retInputs[idx].value=v; rets[idx]=v; }});
+      setCacheVal(sh.key,'ret',[...rets]);
+      updateTotals(); renderSummary(); scheduleSave();
+      const next=i+values.length; if(next<ROWS) retInputs[next].focus();
     });
 
     depInputs.push(dEl); retInputs.push(rEl);
@@ -536,34 +478,33 @@ function buildShiftPanel(sh) {
   }
   panel.appendChild(rowsArea);
 
-  // footer
-  const footer=document.createElement('div'); footer.className='shift-footer';
-  const ftGrid=document.createElement('div'); ftGrid.className='footer-totals';
-  const depTot=document.createElement('div'); depTot.className='ft dep';
-  const retTot=document.createElement('div'); retTot.className='ft ret';
+  // FOOTER
+  const footer  = document.createElement('div'); footer.className='shift-footer';
+  const ftGrid  = document.createElement('div'); ftGrid.className='footer-totals';
+  const depTot  = document.createElement('div'); depTot.className='ft dep';
+  const retTot  = document.createElement('div'); retTot.className='ft ret';
   ftGrid.appendChild(depTot); ftGrid.appendChild(retTot);
-  const netoBox=document.createElement('div'); netoBox.className='neto-box';
+  const netoBox = document.createElement('div'); netoBox.className='neto-box';
   footer.appendChild(ftGrid); footer.appendChild(netoBox);
   panel.appendChild(footer);
 
-  function updateFooter(){
-    const dep=depInputs.reduce((a,el)=>a+parseNum(el.value),0);
-    const ret=retInputs.reduce((a,el)=>a+parseNum(el.value),0);
-    const b=parseNum(bonEl.value);
-    const neto=dep-ret-b;
-    ctDep.textContent=fmt(dep)||'0,00';
-    ctRet.textContent=fmt(ret)||'0,00';
-    depTot.textContent=fmt(dep)||'0,00';
-    retTot.textContent=fmt(ret)||'0,00';
-    netoBox.innerHTML=`
+  function updateTotals() {
+    const dep  = depInputs.reduce((a,el)=>a+parseNum(el.value),0);
+    const ret  = retInputs.reduce((a,el)=>a+parseNum(el.value),0);
+    const b    = parseNum(bonEl.value);
+    const neto = dep-ret-b;
+    ctDep.textContent  = fmt(dep)||'0,00';
+    ctRet.textContent  = fmt(ret)||'0,00';
+    depTot.textContent = fmt(dep)||'0,00';
+    retTot.textContent = fmt(ret)||'0,00';
+    netoBox.innerHTML  = `
       <div class="neto-formula-txt">DEP − RET − BON = NETO</div>
       <div class="neto-val" style="color:${neto>=0?'var(--yellow)':'var(--red)'}">${fmt(neto)||'0,00'}</div>`;
   }
-  updateFooter();
+  updateTotals();
   return panel;
 }
 
-// ── RENDER ALL ──
 async function renderAll() {
   document.getElementById('overlay').classList.add('show');
   setStatus('loading','⟳ CARGANDO');
@@ -571,9 +512,9 @@ async function renderAll() {
   renderDate();
   await loadFromFirebase(currentTab, currentDate);
   renderSummary();
-  const c=document.getElementById('shiftsContainer');
-  c.innerHTML='';
-  SHIFTS.forEach(sh=>c.appendChild(buildShiftPanel(sh)));
+  const c = document.getElementById('shiftsContainer');
+  c.innerHTML = '';
+  SHIFTS.forEach(sh => c.appendChild(buildShiftPanel(sh)));
   document.getElementById('overlay').classList.remove('show');
   setStatus('saved','✓ LISTO');
 }
