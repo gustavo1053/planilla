@@ -16,183 +16,173 @@
     --cyan: #00e5ff;
     --yellow: #ffd600;
     --text: #cdd4e8;
-    --muted: #4a5270;
+    --white: #ffffff;
+    --muted: #ffffff;
     --morning: #0d47a1;
     --afternoon: #e65100;
     --night: #4a148c;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-  .header {
-    display: flex; align-items: center; gap: 6px;
-    padding: 8px 14px; background: var(--bg2);
-    border-bottom: 1px solid var(--border); flex-wrap: wrap;
-  }
-  .logo {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px; letter-spacing: 3px; color: var(--cyan);
-    margin-right: 10px; white-space: nowrap;
-  }
+  body { background: var(--bg); color: var(--text); font-family: 'Rajdhani', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+  /* ── HEADER ── */
+  .header { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--bg2); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .logo { font-family: 'Share Tech Mono', monospace; font-size: 12px; letter-spacing: 3px; color: var(--cyan); margin-right: 10px; white-space: nowrap; }
   .tabs-wrap { display: flex; gap: 5px; flex-wrap: wrap; flex: 1; }
-  .tab-btn {
-    padding: 5px 12px; border: 1px solid var(--border);
-    background: var(--bg3); color: var(--muted);
-    font-family: 'Rajdhani', sans-serif; font-size: 13px;
-    font-weight: 700; letter-spacing: 1px; cursor: pointer;
-    border-radius: 3px; transition: all 0.15s; white-space: nowrap;
-  }
+  .tab-btn { padding: 5px 12px; border: 1px solid var(--border); background: var(--bg3); color: var(--white); font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer; border-radius: 3px; transition: all 0.15s; white-space: nowrap; }
   .tab-btn:hover { border-color: var(--cyan); color: var(--cyan); }
   .tab-btn.active { background: var(--cyan); color: #000; border-color: var(--cyan); }
   .tab-btn.siempre { color: var(--green); border-color: #1a3a1a; }
   .tab-btn.siempre.active { background: var(--green); color: #000; border-color: var(--green); }
-  .save-status {
-    font-family: 'Share Tech Mono', monospace; font-size: 10px;
-    letter-spacing: 2px; padding: 4px 10px; border-radius: 3px;
-    border: 1px solid var(--border); color: var(--muted);
-    white-space: nowrap; margin-left: auto;
-  }
+  .btn-resultados { padding: 5px 14px; border: 1px solid var(--yellow); background: rgba(255,214,0,0.1); color: var(--yellow); font-family: 'Rajdhani', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 1px; cursor: pointer; border-radius: 3px; transition: all 0.15s; white-space: nowrap; }
+  .btn-resultados:hover, .btn-resultados.active { background: var(--yellow); color: #000; }
+  .save-status { font-family: 'Share Tech Mono', monospace; font-size: 10px; letter-spacing: 2px; padding: 4px 10px; border-radius: 3px; border: 1px solid var(--border); color: var(--white); white-space: nowrap; margin-left: auto; }
   .save-status.saving { color: var(--yellow); border-color: var(--yellow); }
   .save-status.saved  { color: var(--green);  border-color: var(--green); }
   .save-status.error  { color: var(--red);    border-color: var(--red); }
   .save-status.loading{ color: var(--cyan);   border-color: var(--cyan); }
 
-  .date-bar {
-    display: flex; align-items: center; justify-content: center;
-    gap: 14px; padding: 7px; background: var(--bg2);
-    border-bottom: 1px solid var(--border);
-  }
-  .day-label { font-size: 10px; letter-spacing: 5px; color: var(--muted); text-align: center; }
-  .date-txt  { font-family: 'Share Tech Mono', monospace; font-size: 17px; letter-spacing: 4px; }
-  .nav-btn {
-    background: none; border: 1px solid var(--border);
-    color: var(--text); width: 26px; height: 26px;
-    cursor: pointer; border-radius: 3px; font-size: 13px;
-    display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.15s;
-  }
+  /* ── DATE BAR ── */
+  .date-bar { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 7px; background: var(--bg2); border-bottom: 1px solid var(--border); }
+  .day-label { font-size: 10px; letter-spacing: 5px; color: var(--white); text-align: center; }
+  .date-txt  { font-family: 'Share Tech Mono', monospace; font-size: 17px; letter-spacing: 4px; color: var(--white); }
+  .nav-btn { background: none; border: 1px solid var(--border); color: var(--white); width: 26px; height: 26px; cursor: pointer; border-radius: 3px; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: border-color 0.15s; }
   .nav-btn:hover { border-color: var(--cyan); color: var(--cyan); }
 
-  .summary-bar {
-    display: flex; background: var(--bg2);
-    border-bottom: 2px solid var(--border); overflow-x: auto;
-  }
-  .summary-shift {
-    flex: 1; min-width: 160px; padding: 8px 14px;
-    border-right: 1px solid var(--border);
-  }
+  /* ── SUMMARY BAR ── */
+  .summary-bar { display: flex; background: var(--bg2); border-bottom: 2px solid var(--border); overflow-x: auto; }
+  .summary-shift { flex: 1; min-width: 160px; padding: 8px 14px; border-right: 1px solid var(--border); }
   .summary-shift:last-child { border-right: none; }
   .summary-shift.total { border-left: 2px solid var(--cyan); background: rgba(0,229,255,0.03); }
-  .s-label { font-size: 10px; letter-spacing: 3px; color: var(--muted); margin-bottom: 4px; }
+  .s-label { font-size: 10px; letter-spacing: 3px; color: var(--white); margin-bottom: 4px; }
   .s-row   { display: flex; justify-content: space-between; margin-bottom: 1px; }
-  .s-lbl   { font-size: 10px; color: var(--muted); }
+  .s-lbl   { font-size: 10px; color: var(--white); }
   .s-green { color: var(--green); font-family: 'Share Tech Mono', monospace; font-size: 13px; }
   .s-red   { color: var(--red);   font-family: 'Share Tech Mono', monospace; font-size: 13px; }
   .s-yel   { color: var(--yellow);font-family: 'Share Tech Mono', monospace; font-size: 13px; }
 
-  .shifts-container {
-    display: grid; grid-template-columns: repeat(3,1fr);
-  }
+  /* ── SHIFTS GRID ── */
+  .shifts-container { display: grid; grid-template-columns: repeat(3,1fr); }
   .shift-panel { border-right: 1px solid var(--border); display: flex; flex-direction: column; }
   .shift-panel:last-child { border-right: none; }
-
-  .shift-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 13px; font-size: 14px; font-weight: 700; letter-spacing: 3px;
-  }
+  .shift-header { display: flex; align-items: center; justify-content: space-between; padding: 9px 13px; font-size: 14px; font-weight: 700; letter-spacing: 3px; }
   .shift-header.morning   { background: var(--morning); }
   .shift-header.afternoon { background: var(--afternoon); }
   .shift-header.night     { background: var(--night); }
 
-  .operator-row {
-    display: flex; align-items: center; padding: 7px 10px; gap: 8px;
-    background: var(--bg3); border-bottom: 1px solid var(--border);
-  }
-  .op-input {
-    background: transparent; border: none; color: var(--text);
-    font-family: 'Rajdhani', sans-serif; font-weight: 700;
-    font-size: 16px; flex: 1; outline: none; text-transform: uppercase;
-  }
-  .op-input::placeholder { color: var(--muted); }
-  .bon-group {
-    display: flex; align-items: center; gap: 4px;
-    background: rgba(0,0,0,0.3); border: 1px solid var(--border);
-    border-radius: 3px; padding: 2px 6px;
-  }
-  .bon-lbl { font-size: 10px; letter-spacing: 2px; color: var(--muted); white-space: nowrap; }
-  .bon-input {
-    background: transparent; border: none; color: var(--yellow);
-    font-family: 'Share Tech Mono', monospace; font-size: 15px;
-    width: 80px; outline: none; text-align: right;
-  }
+  .operator-row { display: flex; align-items: center; padding: 7px 10px; gap: 8px; background: var(--bg3); border-bottom: 1px solid var(--border); }
+  .op-input { background: transparent; border: none; color: var(--white); font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 16px; flex: 1; outline: none; text-transform: uppercase; }
+  .op-input::placeholder { color: rgba(255,255,255,0.4); }
+  .bon-group { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 3px; padding: 2px 6px; }
+  .bon-lbl { font-size: 11px; letter-spacing: 2px; color: var(--white); white-space: nowrap; }
+  .bon-input { background: transparent; border: none; color: var(--yellow); font-family: 'Share Tech Mono', monospace; font-size: 15px; width: 80px; outline: none; text-align: right; }
 
-  /* COLS HEADER */
-  .cols-header {
-    display: grid; grid-template-columns: 14px 1fr 1fr;
-    background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border);
-  }
+  .cols-header { display: grid; grid-template-columns: 14px 1fr 1fr; background: rgba(0,0,0,0.5); border-bottom: 1px solid var(--border); }
   .cols-header > div { text-align: center; padding: 4px 2px; font-size: 11px; letter-spacing: 2px; font-weight: 700; }
   .ch-dep { color: var(--green); border-right: 1px solid var(--border); }
   .ch-ret { color: var(--red); }
 
-  /* TOTALS BAR arriba de filas */
-  .col-totals-bar {
-    display: grid; grid-template-columns: 14px 1fr 1fr;
-    background: rgba(0,0,0,0.65);
-    border-bottom: 2px solid var(--cyan);
-  }
+  .col-totals-bar { display: grid; grid-template-columns: 14px 1fr 1fr; background: rgba(0,0,0,0.65); border-bottom: 2px solid var(--cyan); }
   .col-totals-bar > div { padding: 6px 8px; font-family: 'Share Tech Mono', monospace; font-size: 16px; font-weight: 700; text-align: right; }
   .ct-dep { color: var(--green); border-right: 1px solid var(--border); }
   .ct-ret { color: var(--red); }
 
-  /* ROWS */
   .rows-area { overflow-y: auto; max-height: 700px; }
   .rows-area::-webkit-scrollbar { width: 3px; }
   .rows-area::-webkit-scrollbar-track { background: var(--bg2); }
   .rows-area::-webkit-scrollbar-thumb { background: var(--border); }
 
-  .data-row {
-    display: grid; grid-template-columns: 14px 1fr 1fr;
-    align-items: center; border-bottom: 1px solid rgba(30,34,53,0.4);
-  }
+  .data-row { display: grid; grid-template-columns: 14px 1fr 1fr; align-items: center; border-bottom: 1px solid rgba(30,34,53,0.4); }
   .data-row:hover { background: rgba(255,255,255,0.025); }
-  .row-num { text-align: center; font-size: 8px; color: var(--muted); font-family: 'Share Tech Mono', monospace; }
-
-  .cell-input {
-    background: transparent; border: none;
-    padding: 5px 8px; font-family: 'Share Tech Mono', monospace;
-    font-size: 16px; outline: none; text-align: right; width: 100%;
-  }
+  .row-num { text-align: center; font-size: 8px; color: var(--white); font-family: 'Share Tech Mono', monospace; }
+  .cell-input { background: transparent; border: none; padding: 5px 8px; font-family: 'Share Tech Mono', monospace; font-size: 16px; outline: none; text-align: right; width: 100%; }
   .cell-input.dep { color: var(--green); border-right: 1px solid var(--border); }
   .cell-input.ret { color: var(--red); }
-  .cell-input::placeholder { color: rgba(74,82,112,0.3); }
+  .cell-input::placeholder { color: rgba(255,255,255,0.2); }
   .cell-input:focus { background: rgba(255,255,255,0.03); }
 
-  /* FOOTER */
-  .shift-footer {
-    border-top: 1px solid var(--border);
-    background: rgba(0,0,0,0.5); padding: 8px 12px;
-  }
+  .shift-footer { border-top: 1px solid var(--border); background: rgba(0,0,0,0.5); padding: 8px 12px; }
   .footer-totals { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 6px; }
   .ft { text-align: right; font-family: 'Share Tech Mono', monospace; font-size: 15px; padding: 3px 5px; }
   .ft.dep { color: var(--green); }
   .ft.ret { color: var(--red); }
-  .neto-box {
-    text-align: center; padding: 6px; background: rgba(0,0,0,0.3);
-    border-radius: 3px; border: 1px solid var(--border);
-  }
-  .neto-formula-txt { color: var(--muted); font-size: 10px; letter-spacing: 1px; margin-bottom: 2px; }
+  .neto-box { text-align: center; padding: 6px; background: rgba(0,0,0,0.3); border-radius: 3px; border: 1px solid var(--border); }
+  .neto-formula-txt { color: var(--white); font-size: 10px; letter-spacing: 1px; margin-bottom: 2px; }
   .neto-val { font-family: 'Share Tech Mono', monospace; font-size: 17px; font-weight: 700; }
 
-  .overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-    display: none; align-items: center; justify-content: center; z-index: 1000;
+  /* ── RESULTADOS VIEW ── */
+  .resultados-view { display: none; padding: 20px; max-width: 900px; margin: 0 auto; }
+  .resultados-view.show { display: block; }
+
+  .res-tab-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 4px; color: var(--cyan);
+    margin-bottom: 20px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
   }
+
+  .res-section {
+    border-radius: 5px; overflow: hidden; margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  .res-section-header {
+    padding: 10px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px; letter-spacing: 2px; font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .res-section-header.ctrl { background: #1a0a0a; color: var(--white); border-bottom: 1px solid var(--border); }
+  .res-section-header.pyg  { background: #3a0a00; color: var(--red); border-bottom: 1px solid var(--border); }
+  .res-section-header.pyg span.tab-name { color: var(--white); }
+
+  .ctrl-body { padding: 16px; background: var(--bg2); }
+  .ctrl-agent-name { font-family: 'Share Tech Mono', monospace; font-size: 15px; color: var(--white); margin-bottom: 14px; letter-spacing: 2px; }
+  .ctrl-turno-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .ctrl-turno-lbl { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--white); width: 30px; }
+  .ctrl-estado {
+    display: flex; gap: 6px;
+  }
+  .estado-btn {
+    padding: 4px 12px; border-radius: 3px; border: 1px solid var(--border);
+    font-family: 'Share Tech Mono', monospace; font-size: 12px;
+    cursor: pointer; background: var(--bg3); color: var(--white);
+    transition: all 0.15s;
+  }
+  .estado-btn.ok.active   { background: var(--green); color: #000; border-color: var(--green); }
+  .estado-btn.mal.active  { background: var(--red);   color: #fff; border-color: var(--red); }
+  .ctrl-obs-input {
+    flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+    color: var(--white); font-family: 'Share Tech Mono', monospace;
+    font-size: 13px; padding: 4px 8px; border-radius: 3px; outline: none;
+  }
+  .ctrl-obs-input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .pyg-body { padding: 16px; background: var(--bg2); }
+  .pyg-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+  .pyg-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .pyg-turno-lbl { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--white); width: 30px; padding-top: 6px; }
+  .pyg-monto-wrap { display: flex; align-items: center; gap: 6px; }
+  .pyg-sign { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--green); font-weight: 700; }
+  .pyg-sign.neg { color: var(--red); }
+  .pyg-monto {
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+    color: var(--green); font-family: 'Share Tech Mono', monospace;
+    font-size: 18px; font-weight: 700; padding: 4px 8px;
+    border-radius: 3px; outline: none; width: 160px; text-align: right;
+  }
+  .pyg-monto.neg { color: var(--red); }
+  .pyg-details { flex: 1; }
+  .pyg-obs {
+    width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+    color: var(--white); font-family: 'Rajdhani', sans-serif; font-size: 15px;
+    padding: 6px 10px; border-radius: 3px; outline: none; resize: vertical;
+    min-height: 60px; margin-top: 4px;
+  }
+  .pyg-obs::placeholder { color: rgba(255,255,255,0.3); }
+  .pyg-obs-lbl { font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+
+  /* ── OVERLAY ── */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; z-index: 1000; }
   .overlay.show { display: flex; }
   .overlay-box { background: var(--bg2); border: 1px solid var(--cyan); border-radius: 6px; padding: 28px 36px; text-align: center; }
   .overlay-box .spin { font-size: 28px; display: block; margin-bottom: 12px; animation: spin 1s linear infinite; }
@@ -210,6 +200,7 @@
 <div class="header">
   <div class="logo">PLANILLA DE CONTROL</div>
   <div class="tabs-wrap" id="tabs"></div>
+  <button class="btn-resultados" id="btnResultados" onclick="toggleResultados()">📊 RESULTADOS</button>
   <div class="save-status loading" id="saveStatus">⟳ CONECTANDO</div>
 </div>
 
@@ -222,8 +213,13 @@
   <button class="nav-btn" onclick="changeDate(1)">▶</button>
 </div>
 
-<div class="summary-bar"     id="summaryBar"></div>
+<div class="summary-bar" id="summaryBar"></div>
+
+<!-- VISTA PLANILLA -->
 <div class="shifts-container" id="shiftsContainer"></div>
+
+<!-- VISTA RESULTADOS -->
+<div class="resultados-view" id="resultadosView"></div>
 
 <div class="overlay" id="overlay">
   <div class="overlay-box">
@@ -250,21 +246,21 @@ const db    = getFirestore(fbApp);
 
 const TABS   = ['AGE 18','AGE 19','AGE 20','AGE 22','AGE 23','AGE 24','AGE 25','SIEMPRE MONO'];
 const SHIFTS = [
-  { key:'morning',   label:'MAÑANA', icon:'✦',  cls:'morning'   },
-  { key:'afternoon', label:'TARDE',  icon:'🔆', cls:'afternoon' },
-  { key:'night',     label:'NOCHE',  icon:'🌙', cls:'night'     },
+  { key:'morning',   label:'MAÑANA', short:'TM', icon:'✦',  cls:'morning'   },
+  { key:'afternoon', label:'TARDE',  short:'TT', icon:'🔆', cls:'afternoon' },
+  { key:'night',     label:'NOCHE',  short:'TN', icon:'🌙', cls:'night'     },
 ];
-const ROWS    = 70;
+const ROWS    = 100;
 const DAYS_ES = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
 
-let currentTab  = TABS[0];
-let currentDate = new Date(); currentDate.setHours(0,0,0,0);
-const cache = {};
+let currentTab      = TABS[0];
+let currentDate     = new Date(); currentDate.setHours(0,0,0,0);
+let mostrandoRes    = false;
+const cache         = {};
 
-function dateKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
+function dateKey(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 function docId(tab, date) { return `${tab.replace(/ /g,'_')}__${dateKey(date)}`; }
+function docIdRes(tab, date) { return `RES__${tab.replace(/ /g,'_')}__${dateKey(date)}`; }
 
 function setStatus(type, msg) {
   const el = document.getElementById('saveStatus');
@@ -283,6 +279,7 @@ function parseNum(s) {
   return isNaN(n) ? 0 : n;
 }
 
+/* ── FIREBASE ── */
 async function loadFromFirebase(tab, date) {
   const dk = dateKey(date);
   if (!cache[tab]) cache[tab] = {};
@@ -293,6 +290,19 @@ async function loadFromFirebase(tab, date) {
   } catch(e) {
     cache[tab][dk] = {};
     setStatus('error','✗ SIN CONEXIÓN');
+  }
+}
+
+const cacheRes = {};
+async function loadResFromFirebase(tab, date) {
+  const dk = dateKey(date);
+  if (!cacheRes[tab]) cacheRes[tab] = {};
+  if (cacheRes[tab][dk] !== undefined) return;
+  try {
+    const snap = await getDoc(doc(db,'planilla', docIdRes(tab,date)));
+    cacheRes[tab][dk] = snap.exists() ? snap.data() : {};
+  } catch(e) {
+    cacheRes[tab][dk] = {};
   }
 }
 
@@ -308,9 +318,22 @@ async function doSave() {
   try {
     await setDoc(doc(db,'planilla', docId(currentTab,currentDate)), data);
     setStatus('saved','✓ GUARDADO');
-  } catch(e) {
-    setStatus('error','✗ ERROR AL GUARDAR');
-  }
+  } catch(e) { setStatus('error','✗ ERROR AL GUARDAR'); }
+}
+
+let saveResTimer = null;
+function scheduleResSave() {
+  setStatus('saving','… GUARDANDO');
+  clearTimeout(saveResTimer);
+  saveResTimer = setTimeout(doResSave, 1000);
+}
+async function doResSave() {
+  const dk   = dateKey(currentDate);
+  const data = cacheRes[currentTab]?.[dk] || {};
+  try {
+    await setDoc(doc(db,'planilla', docIdRes(currentTab,currentDate)), data);
+    setStatus('saved','✓ GUARDADO');
+  } catch(e) { setStatus('error','✗ ERROR AL GUARDAR'); }
 }
 
 function getCacheVal(shift, field, def) {
@@ -323,7 +346,18 @@ function setCacheVal(shift, field, val) {
   if (!cache[currentTab][dk]) cache[currentTab][dk] = {};
   cache[currentTab][dk][`${shift}_${field}`] = val;
 }
+function getResVal(key, def) {
+  const dk = dateKey(currentDate);
+  return cacheRes[currentTab]?.[dk]?.[key] ?? def;
+}
+function setResVal(key, val) {
+  const dk = dateKey(currentDate);
+  if (!cacheRes[currentTab])     cacheRes[currentTab]     = {};
+  if (!cacheRes[currentTab][dk]) cacheRes[currentTab][dk] = {};
+  cacheRes[currentTab][dk][key] = val;
+}
 
+/* ── TABS ── */
 function renderTabs() {
   const c = document.getElementById('tabs');
   c.innerHTML = '';
@@ -334,8 +368,11 @@ function renderTabs() {
     b.onclick = async () => { currentTab=t; await renderAll(); };
     c.appendChild(b);
   });
+  const br = document.getElementById('btnResultados');
+  if (mostrandoRes) br.classList.add('active'); else br.classList.remove('active');
 }
 
+/* ── DATE ── */
 function renderDate() {
   const d  = currentDate;
   const dd = String(d.getDate()).padStart(2,'0');
@@ -348,6 +385,27 @@ window.changeDate = async function(delta) {
   await renderAll();
 };
 
+/* ── TOGGLE RESULTADOS ── */
+window.toggleResultados = async function() {
+  mostrandoRes = !mostrandoRes;
+  const sc = document.getElementById('shiftsContainer');
+  const rv = document.getElementById('resultadosView');
+  const sb = document.getElementById('summaryBar');
+  if (mostrandoRes) {
+    sc.style.display = 'none';
+    sb.style.display = 'none';
+    rv.classList.add('show');
+    await loadResFromFirebase(currentTab, currentDate);
+    renderResultados();
+  } else {
+    sc.style.display = '';
+    sb.style.display = '';
+    rv.classList.remove('show');
+  }
+  renderTabs();
+};
+
+/* ── SUMMARY ── */
 function renderSummary() {
   const bar = document.getElementById('summaryBar');
   bar.innerHTML = '';
@@ -380,6 +438,129 @@ function renderSummary() {
   bar.appendChild(tot);
 }
 
+/* ── RESULTADOS VIEW ── */
+function renderResultados() {
+  const rv = document.getElementById('resultadosView');
+  rv.innerHTML = '';
+
+  const title = document.createElement('div');
+  title.className = 'res-tab-title';
+  title.textContent = `► ${currentTab}  —  ${document.getElementById('dateTxt').textContent}`;
+  rv.appendChild(title);
+
+  // ── CTRL TURNOS ──
+  const ctrlSec = document.createElement('div'); ctrlSec.className='res-section';
+  const ctrlHdr = document.createElement('div'); ctrlHdr.className='res-section-header ctrl';
+  ctrlHdr.innerHTML = `<span>🗂</span><span>CTRL TURNOS — ${currentTab}</span>`;
+  ctrlSec.appendChild(ctrlHdr);
+
+  const ctrlBody = document.createElement('div'); ctrlBody.className='ctrl-body';
+
+  // nombre agente
+  const agName = document.createElement('div'); agName.className='ctrl-agent-name';
+  agName.textContent = currentTab;
+  ctrlBody.appendChild(agName);
+
+  SHIFTS.forEach(sh => {
+    const row = document.createElement('div'); row.className='ctrl-turno-row';
+
+    const lbl = document.createElement('div'); lbl.className='ctrl-turno-lbl';
+    lbl.textContent = sh.short;
+    row.appendChild(lbl);
+
+    // estado OK / MAL
+    const estadoWrap = document.createElement('div'); estadoWrap.className='ctrl-estado';
+    const savedEstado = getResVal(`ctrl_${sh.key}_estado`, 'ok');
+
+    ['OK','MAL','LIBRE'].forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = `estado-btn ${opt.toLowerCase()}`;
+      btn.textContent = opt;
+      if (savedEstado === opt.toLowerCase()) btn.classList.add('active');
+      btn.onclick = () => {
+        estadoWrap.querySelectorAll('.estado-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        setResVal(`ctrl_${sh.key}_estado`, opt.toLowerCase());
+        scheduleResSave();
+      };
+      estadoWrap.appendChild(btn);
+    });
+    row.appendChild(estadoWrap);
+
+    // obs corta
+    const obs = document.createElement('input');
+    obs.className='ctrl-obs-input'; obs.placeholder='Novedades del turno...';
+    obs.value = getResVal(`ctrl_${sh.key}_obs`, '');
+    obs.addEventListener('input',()=>{ setResVal(`ctrl_${sh.key}_obs`, obs.value); scheduleResSave(); });
+    row.appendChild(obs);
+
+    ctrlBody.appendChild(row);
+  });
+  ctrlSec.appendChild(ctrlBody);
+  rv.appendChild(ctrlSec);
+
+  // ── PÉRDIDAS / GANANCIAS ──
+  const pygSec = document.createElement('div'); pygSec.className='res-section';
+  const pygHdr = document.createElement('div'); pygHdr.className='res-section-header pyg';
+  pygHdr.innerHTML = `<span>PÉRDIDAS / GANANCIAS —</span><span class="tab-name"> ${currentTab}</span>`;
+  pygSec.appendChild(pygHdr);
+
+  const pygBody = document.createElement('div'); pygBody.className='pyg-body';
+
+  SHIFTS.forEach(sh => {
+    const row = document.createElement('div'); row.className='pyg-row';
+
+    const lbl = document.createElement('div'); lbl.className='pyg-turno-lbl';
+    lbl.textContent = sh.short;
+    row.appendChild(lbl);
+
+    // signo + monto
+    const montoWrap = document.createElement('div'); montoWrap.className='pyg-monto-wrap';
+    const savedSign  = getResVal(`pyg_${sh.key}_sign`, '+');
+    const signBtn = document.createElement('div');
+    signBtn.className = `pyg-sign${savedSign==='-'?' neg':''}`;
+    signBtn.textContent = savedSign;
+    signBtn.style.cursor = 'pointer';
+    signBtn.title = 'Click para cambiar + / −';
+
+    const montoEl = document.createElement('input');
+    montoEl.className = `pyg-monto${savedSign==='-'?' neg':''}`;
+    montoEl.placeholder = '0,00';
+    montoEl.value = getResVal(`pyg_${sh.key}_monto`, '');
+
+    signBtn.onclick = () => {
+      const cur = getResVal(`pyg_${sh.key}_sign`, '+');
+      const nxt = cur === '+' ? '-' : '+';
+      setResVal(`pyg_${sh.key}_sign`, nxt);
+      signBtn.textContent = nxt;
+      signBtn.className = `pyg-sign${nxt==='-'?' neg':''}`;
+      montoEl.className  = `pyg-monto${nxt==='-'?' neg':''}`;
+      scheduleResSave();
+    };
+    montoEl.addEventListener('input',()=>{ setResVal(`pyg_${sh.key}_monto`, montoEl.value); scheduleResSave(); });
+
+    montoWrap.appendChild(signBtn);
+    montoWrap.appendChild(montoEl);
+    row.appendChild(montoWrap);
+
+    // detalle / novedades
+    const details = document.createElement('div'); details.className='pyg-details';
+    const obsLbl = document.createElement('div'); obsLbl.className='pyg-obs-lbl'; obsLbl.textContent='NOVEDADES / DESCARTE / OBS';
+    const obsEl  = document.createElement('textarea');
+    obsEl.className='pyg-obs'; obsEl.placeholder='Ej: Descarte: 55.600, Col. Pag.: 120.000, Sueldo: 200.000...';
+    obsEl.value = getResVal(`pyg_${sh.key}_obs`, '');
+    obsEl.addEventListener('input',()=>{ setResVal(`pyg_${sh.key}_obs`, obsEl.value); scheduleResSave(); });
+    details.appendChild(obsLbl);
+    details.appendChild(obsEl);
+    row.appendChild(details);
+
+    pygBody.appendChild(row);
+  });
+  pygSec.appendChild(pygBody);
+  rv.appendChild(pygSec);
+}
+
+/* ── SHIFT PANEL ── */
 function buildShiftPanel(sh) {
   const deps = getCacheVal(sh.key,'dep', Array(ROWS).fill('')).slice();
   const rets = getCacheVal(sh.key,'ret', Array(ROWS).fill('')).slice();
@@ -388,38 +569,28 @@ function buildShiftPanel(sh) {
   while(deps.length < ROWS) deps.push('');
   while(rets.length < ROWS) rets.push('');
 
-  const panel = document.createElement('div');
-  panel.className = 'shift-panel';
+  const panel = document.createElement('div'); panel.className='shift-panel';
 
-  // HEADER
-  const hdr = document.createElement('div');
-  hdr.className = `shift-header ${sh.cls}`;
-  hdr.innerHTML = `<span>${sh.icon}</span><span>${sh.label}</span><span></span>`;
+  const hdr = document.createElement('div'); hdr.className=`shift-header ${sh.cls}`;
+  hdr.innerHTML=`<span>${sh.icon}</span><span>${sh.label}</span><span></span>`;
   panel.appendChild(hdr);
 
-  // OPERATOR + BON
   const opRow = document.createElement('div'); opRow.className='operator-row';
   const opEl  = document.createElement('input');
   opEl.className='op-input'; opEl.placeholder='OPERADOR'; opEl.value=op;
   opEl.addEventListener('input',()=>{ setCacheVal(sh.key,'op',opEl.value); scheduleSave(); });
   const bonG  = document.createElement('div'); bonG.className='bon-group';
-  bonG.innerHTML = '<span class="bon-lbl">BON</span>';
+  bonG.innerHTML='<span class="bon-lbl">BON</span>';
   const bonEl = document.createElement('input');
   bonEl.className='bon-input'; bonEl.placeholder='0'; bonEl.value=bon;
-  bonEl.addEventListener('input',()=>{
-    setCacheVal(sh.key,'bon',bonEl.value);
-    updateTotals(); renderSummary(); scheduleSave();
-  });
-  bonG.appendChild(bonEl);
-  opRow.appendChild(opEl); opRow.appendChild(bonG);
+  bonEl.addEventListener('input',()=>{ setCacheVal(sh.key,'bon',bonEl.value); updateTotals(); renderSummary(); scheduleSave(); });
+  bonG.appendChild(bonEl); opRow.appendChild(opEl); opRow.appendChild(bonG);
   panel.appendChild(opRow);
 
-  // COLS HEADER
   const colsH = document.createElement('div'); colsH.className='cols-header';
   colsH.innerHTML='<div></div><div class="ch-dep">DEPÓSITOS</div><div class="ch-ret">RETIROS</div>';
   panel.appendChild(colsH);
 
-  // TOTALS BAR (arriba de las filas)
   const ctBar = document.createElement('div'); ctBar.className='col-totals-bar';
   const ctSpc = document.createElement('div');
   const ctDep = document.createElement('div'); ctDep.className='ct-dep'; ctDep.textContent='0,00';
@@ -427,10 +598,8 @@ function buildShiftPanel(sh) {
   ctBar.appendChild(ctSpc); ctBar.appendChild(ctDep); ctBar.appendChild(ctRet);
   panel.appendChild(ctBar);
 
-  // ROWS
   const rowsArea  = document.createElement('div'); rowsArea.className='rows-area';
-  const depInputs = [];
-  const retInputs = [];
+  const depInputs = [], retInputs = [];
 
   for (let i = 0; i < ROWS; i++) {
     const row = document.createElement('div'); row.className='data-row';
@@ -439,37 +608,25 @@ function buildShiftPanel(sh) {
     const dEl = document.createElement('input');
     dEl.className='cell-input dep'; dEl.type='text'; dEl.inputMode='decimal';
     dEl.placeholder='0'; dEl.value=deps[i]||'';
-    dEl.addEventListener('input',()=>{
-      deps[i]=dEl.value;
-      setCacheVal(sh.key,'dep',[...deps]);
-      updateTotals(); renderSummary(); scheduleSave();
-    });
+    dEl.addEventListener('input',()=>{ deps[i]=dEl.value; setCacheVal(sh.key,'dep',[...deps]); updateTotals(); renderSummary(); scheduleSave(); });
     dEl.addEventListener('paste',(e)=>{
       e.preventDefault();
-      const text   = (e.clipboardData||window.clipboardData).getData('text');
-      const values = text.split(/[\n\r]+/).map(v=>v.trim()).filter(v=>v!=='');
-      values.forEach((v,off)=>{ const idx=i+off; if(idx<ROWS){ depInputs[idx].value=v; deps[idx]=v; }});
-      setCacheVal(sh.key,'dep',[...deps]);
-      updateTotals(); renderSummary(); scheduleSave();
-      const next=i+values.length; if(next<ROWS) depInputs[next].focus();
+      const vals = (e.clipboardData||window.clipboardData).getData('text').split(/[\n\r]+/).map(v=>v.trim()).filter(v=>v!=='');
+      vals.forEach((v,off)=>{ const idx=i+off; if(idx<ROWS){ depInputs[idx].value=v; deps[idx]=v; }});
+      setCacheVal(sh.key,'dep',[...deps]); updateTotals(); renderSummary(); scheduleSave();
+      const nx=i+vals.length; if(nx<ROWS) depInputs[nx].focus();
     });
 
     const rEl = document.createElement('input');
     rEl.className='cell-input ret'; rEl.type='text'; rEl.inputMode='decimal';
     rEl.placeholder='0'; rEl.value=rets[i]||'';
-    rEl.addEventListener('input',()=>{
-      rets[i]=rEl.value;
-      setCacheVal(sh.key,'ret',[...rets]);
-      updateTotals(); renderSummary(); scheduleSave();
-    });
+    rEl.addEventListener('input',()=>{ rets[i]=rEl.value; setCacheVal(sh.key,'ret',[...rets]); updateTotals(); renderSummary(); scheduleSave(); });
     rEl.addEventListener('paste',(e)=>{
       e.preventDefault();
-      const text   = (e.clipboardData||window.clipboardData).getData('text');
-      const values = text.split(/[\n\r]+/).map(v=>v.trim()).filter(v=>v!=='');
-      values.forEach((v,off)=>{ const idx=i+off; if(idx<ROWS){ retInputs[idx].value=v; rets[idx]=v; }});
-      setCacheVal(sh.key,'ret',[...rets]);
-      updateTotals(); renderSummary(); scheduleSave();
-      const next=i+values.length; if(next<ROWS) retInputs[next].focus();
+      const vals = (e.clipboardData||window.clipboardData).getData('text').split(/[\n\r]+/).map(v=>v.trim()).filter(v=>v!=='');
+      vals.forEach((v,off)=>{ const idx=i+off; if(idx<ROWS){ retInputs[idx].value=v; rets[idx]=v; }});
+      setCacheVal(sh.key,'ret',[...rets]); updateTotals(); renderSummary(); scheduleSave();
+      const nx=i+vals.length; if(nx<ROWS) retInputs[nx].focus();
     });
 
     depInputs.push(dEl); retInputs.push(rEl);
@@ -478,7 +635,6 @@ function buildShiftPanel(sh) {
   }
   panel.appendChild(rowsArea);
 
-  // FOOTER
   const footer  = document.createElement('div'); footer.className='shift-footer';
   const ftGrid  = document.createElement('div'); ftGrid.className='footer-totals';
   const depTot  = document.createElement('div'); depTot.className='ft dep';
@@ -489,32 +645,41 @@ function buildShiftPanel(sh) {
   panel.appendChild(footer);
 
   function updateTotals() {
-    const dep  = depInputs.reduce((a,el)=>a+parseNum(el.value),0);
-    const ret  = retInputs.reduce((a,el)=>a+parseNum(el.value),0);
-    const b    = parseNum(bonEl.value);
-    const neto = dep-ret-b;
-    ctDep.textContent  = fmt(dep)||'0,00';
-    ctRet.textContent  = fmt(ret)||'0,00';
-    depTot.textContent = fmt(dep)||'0,00';
-    retTot.textContent = fmt(ret)||'0,00';
-    netoBox.innerHTML  = `
-      <div class="neto-formula-txt">DEP − RET − BON = NETO</div>
-      <div class="neto-val" style="color:${neto>=0?'var(--yellow)':'var(--red)'}">${fmt(neto)||'0,00'}</div>`;
+    const dep=depInputs.reduce((a,el)=>a+parseNum(el.value),0);
+    const ret=retInputs.reduce((a,el)=>a+parseNum(el.value),0);
+    const b=parseNum(bonEl.value); const neto=dep-ret-b;
+    ctDep.textContent=fmt(dep)||'0,00'; ctRet.textContent=fmt(ret)||'0,00';
+    depTot.textContent=fmt(dep)||'0,00'; retTot.textContent=fmt(ret)||'0,00';
+    netoBox.innerHTML=`<div class="neto-formula-txt">DEP − RET − BON = NETO</div><div class="neto-val" style="color:${neto>=0?'var(--yellow)':'var(--red)'}">${fmt(neto)||'0,00'}</div>`;
   }
   updateTotals();
   return panel;
 }
 
+/* ── RENDER ALL ── */
 async function renderAll() {
   document.getElementById('overlay').classList.add('show');
   setStatus('loading','⟳ CARGANDO');
   renderTabs();
   renderDate();
   await loadFromFirebase(currentTab, currentDate);
-  renderSummary();
-  const c = document.getElementById('shiftsContainer');
-  c.innerHTML = '';
-  SHIFTS.forEach(sh => c.appendChild(buildShiftPanel(sh)));
+
+  if (mostrandoRes) {
+    await loadResFromFirebase(currentTab, currentDate);
+    document.getElementById('shiftsContainer').style.display = 'none';
+    document.getElementById('summaryBar').style.display = 'none';
+    document.getElementById('resultadosView').classList.add('show');
+    renderResultados();
+  } else {
+    document.getElementById('shiftsContainer').style.display = '';
+    document.getElementById('summaryBar').style.display = '';
+    document.getElementById('resultadosView').classList.remove('show');
+    renderSummary();
+    const c = document.getElementById('shiftsContainer');
+    c.innerHTML = '';
+    SHIFTS.forEach(sh => c.appendChild(buildShiftPanel(sh)));
+  }
+
   document.getElementById('overlay').classList.remove('show');
   setStatus('saved','✓ LISTO');
 }
