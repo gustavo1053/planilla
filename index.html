@@ -164,13 +164,13 @@
   .pyg-monto-wrap { display: flex; align-items: center; gap: 6px; }
   .pyg-sign { font-family: 'Share Tech Mono', monospace; font-size: 18px; color: var(--green); font-weight: 700; }
   .pyg-sign.neg { color: var(--red); }
-  .pyg-monto {
-    background: rgba(0,0,0,0.3); border: 1px solid var(--border);
+  .pyg-monto-display {
+    background: rgba(0,230,118,0.08); border: 1px solid var(--green);
     color: var(--green); font-family: 'Share Tech Mono', monospace;
-    font-size: 18px; font-weight: 700; padding: 4px 8px;
-    border-radius: 3px; outline: none; width: 160px; text-align: right;
+    font-size: 20px; font-weight: 700; padding: 6px 12px;
+    border-radius: 3px; min-width: 160px; text-align: right;
   }
-  .pyg-monto.neg { color: var(--red); }
+  .pyg-monto-display.neg { background: rgba(255,23,68,0.08); border-color: var(--red); color: var(--red); }
   .pyg-details { flex: 1; }
   .pyg-obs {
     width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--border);
@@ -448,56 +448,7 @@ function renderResultados() {
   title.textContent = `► ${currentTab}  —  ${document.getElementById('dateTxt').textContent}`;
   rv.appendChild(title);
 
-  // ── CTRL TURNOS ──
-  const ctrlSec = document.createElement('div'); ctrlSec.className='res-section';
-  const ctrlHdr = document.createElement('div'); ctrlHdr.className='res-section-header ctrl';
-  ctrlHdr.innerHTML = `<span>🗂</span><span>CTRL TURNOS — ${currentTab}</span>`;
-  ctrlSec.appendChild(ctrlHdr);
 
-  const ctrlBody = document.createElement('div'); ctrlBody.className='ctrl-body';
-
-  // nombre agente
-  const agName = document.createElement('div'); agName.className='ctrl-agent-name';
-  agName.textContent = currentTab;
-  ctrlBody.appendChild(agName);
-
-  SHIFTS.forEach(sh => {
-    const row = document.createElement('div'); row.className='ctrl-turno-row';
-
-    const lbl = document.createElement('div'); lbl.className='ctrl-turno-lbl';
-    lbl.textContent = sh.short;
-    row.appendChild(lbl);
-
-    // estado OK / MAL
-    const estadoWrap = document.createElement('div'); estadoWrap.className='ctrl-estado';
-    const savedEstado = getResVal(`ctrl_${sh.key}_estado`, 'ok');
-
-    ['OK','MAL','LIBRE'].forEach(opt => {
-      const btn = document.createElement('button');
-      btn.className = `estado-btn ${opt.toLowerCase()}`;
-      btn.textContent = opt;
-      if (savedEstado === opt.toLowerCase()) btn.classList.add('active');
-      btn.onclick = () => {
-        estadoWrap.querySelectorAll('.estado-btn').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        setResVal(`ctrl_${sh.key}_estado`, opt.toLowerCase());
-        scheduleResSave();
-      };
-      estadoWrap.appendChild(btn);
-    });
-    row.appendChild(estadoWrap);
-
-    // obs corta
-    const obs = document.createElement('input');
-    obs.className='ctrl-obs-input'; obs.placeholder='Novedades del turno...';
-    obs.value = getResVal(`ctrl_${sh.key}_obs`, '');
-    obs.addEventListener('input',()=>{ setResVal(`ctrl_${sh.key}_obs`, obs.value); scheduleResSave(); });
-    row.appendChild(obs);
-
-    ctrlBody.appendChild(row);
-  });
-  ctrlSec.appendChild(ctrlBody);
-  rv.appendChild(ctrlSec);
 
   // ── PÉRDIDAS / GANANCIAS ──
   const pygSec = document.createElement('div'); pygSec.className='res-section';
@@ -514,36 +465,28 @@ function renderResultados() {
     lbl.textContent = sh.short;
     row.appendChild(lbl);
 
-    // signo + monto
+    // Calcular NETO desde cache de la planilla
+    const deps = getCacheVal(sh.key,'dep', Array(ROWS).fill(''));
+    const rets = getCacheVal(sh.key,'ret', Array(ROWS).fill(''));
+    const bon  = parseNum(getCacheVal(sh.key,'bon',''));
+    const dep  = deps.reduce((a,v)=>a+parseNum(v),0);
+    const ret  = rets.reduce((a,v)=>a+parseNum(v),0);
+    const neto = dep - ret - bon;
+    const esPos = neto >= 0;
+
+    // monto linkeado automático
     const montoWrap = document.createElement('div'); montoWrap.className='pyg-monto-wrap';
-    const savedSign  = getResVal(`pyg_${sh.key}_sign`, '+');
-    const signBtn = document.createElement('div');
-    signBtn.className = `pyg-sign${savedSign==='-'?' neg':''}`;
-    signBtn.textContent = savedSign;
-    signBtn.style.cursor = 'pointer';
-    signBtn.title = 'Click para cambiar + / −';
-
-    const montoEl = document.createElement('input');
-    montoEl.className = `pyg-monto${savedSign==='-'?' neg':''}`;
-    montoEl.placeholder = '0,00';
-    montoEl.value = getResVal(`pyg_${sh.key}_monto`, '');
-
-    signBtn.onclick = () => {
-      const cur = getResVal(`pyg_${sh.key}_sign`, '+');
-      const nxt = cur === '+' ? '-' : '+';
-      setResVal(`pyg_${sh.key}_sign`, nxt);
-      signBtn.textContent = nxt;
-      signBtn.className = `pyg-sign${nxt==='-'?' neg':''}`;
-      montoEl.className  = `pyg-monto${nxt==='-'?' neg':''}`;
-      scheduleResSave();
-    };
-    montoEl.addEventListener('input',()=>{ setResVal(`pyg_${sh.key}_monto`, montoEl.value); scheduleResSave(); });
-
-    montoWrap.appendChild(signBtn);
+    const signEl = document.createElement('div');
+    signEl.className = `pyg-sign${esPos?'':' neg'}`;
+    signEl.textContent = esPos ? '+' : '−';
+    const montoEl = document.createElement('div');
+    montoEl.className = `pyg-monto-display${esPos?'':' neg'}`;
+    montoEl.textContent = fmt(Math.abs(neto)) || '0,00';
+    montoWrap.appendChild(signEl);
     montoWrap.appendChild(montoEl);
     row.appendChild(montoWrap);
 
-    // detalle / novedades
+    // detalle / novedades (solo manual)
     const details = document.createElement('div'); details.className='pyg-details';
     const obsLbl = document.createElement('div'); obsLbl.className='pyg-obs-lbl'; obsLbl.textContent='NOVEDADES / DESCARTE / OBS';
     const obsEl  = document.createElement('textarea');
@@ -609,6 +552,13 @@ function buildShiftPanel(sh) {
     dEl.className='cell-input dep'; dEl.type='text'; dEl.inputMode='decimal';
     dEl.placeholder='0'; dEl.value=deps[i]||'';
     dEl.addEventListener('input',()=>{ deps[i]=dEl.value; setCacheVal(sh.key,'dep',[...deps]); updateTotals(); renderSummary(); scheduleSave(); });
+    dEl.addEventListener('keydown',(e)=>{
+      if((e.key==='Tab'||e.key==='Enter') && !e.shiftKey){
+        e.preventDefault();
+        if(i < ROWS-1){ depInputs[i+1].focus(); }
+        else { retInputs[0].focus(); retInputs[0].scrollIntoView({block:'center'}); }
+      }
+    });
     dEl.addEventListener('paste',(e)=>{
       e.preventDefault();
       const vals = (e.clipboardData||window.clipboardData).getData('text').split(/[\n\r]+/).map(v=>v.trim()).filter(v=>v!=='');
