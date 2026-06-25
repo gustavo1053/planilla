@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BONIFICACIONES</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0500;font-family:Calibri,Arial,sans-serif;font-size:13px;color:#ffb97a;min-height:100vh;padding:16px;}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:90vh;gap:20px;}
+.login-box{background:#1a0800;border:1px solid #7a2900;border-radius:10px;padding:36px 40px;
+  display:flex;flex-direction:column;align-items:center;gap:18px;min-width:280px;
+  box-shadow:0 4px 24px rgba(0,0,0,.5);}
+.login-title{color:#FFD600;font-size:20px;font-weight:700;letter-spacing:3px;text-align:center;}
+.login-sub{color:#7a4a00;font-size:11px;letter-spacing:2px;text-align:center;}
+.pin-dots{display:flex;gap:12px;margin:8px 0;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #5a2a00;background:transparent;transition:all .2s;}
+.pin-dot.filled{background:#FFD600;border-color:#FFD600;box-shadow:0 0 8px #FFD600;}
+.pin-pad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;}
+.pin-btn{width:64px;height:48px;background:#1a0800;border:1px solid #5a2a00;color:#FFD600;
+  font-size:18px;font-weight:700;border-radius:6px;cursor:pointer;transition:all .15s;font-family:'Rajdhani',sans-serif;}
+.pin-btn:hover{background:#2e1400;border-color:#FFD600;}
+.pin-btn:active{background:#3a1800;}
+.pin-clear{color:#ff6b6b;border-color:#5a1a1a;}
+.pin-clear:hover{background:#2e0a0a;border-color:#ff6b6b;}
+.pin-error{color:#ff6b6b;font-size:12px;letter-spacing:1px;min-height:18px;text-align:center;}
+
+/* ── APP ── */
+#appScreen{display:none;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+  background:linear-gradient(135deg,#5a1a00 0%,#9c3d00 100%);
+  color:#fff;padding:12px 20px;border-radius:8px 8px 0 0;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.top-bar .title{font-size:17px;font-weight:700;letter-spacing:2px;white-space:nowrap;color:#FFD600;}
+.btn-logout{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#ffb97a;
+  font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 14px;border-radius:4px;cursor:pointer;}
+.btn-logout:hover{background:rgba(255,100,50,.2);border-color:#ff6b6b;color:#ff6b6b;}
+
+.controls-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  background:#1a0800;padding:10px 16px;border:1px solid #5a2a00;border-top:none;}
+.controls-bar label{color:#ffb97a;font-size:11px;letter-spacing:1px;font-weight:700;}
+.controls-bar input[type=date]{background:#0a0500;border:1px solid #7a2900;color:#FFD600;
+  border-radius:5px;padding:4px 10px;font-size:13px;font-weight:700;outline:none;}
+.controls-bar input[type=date]:focus{border-color:#FFD600;}
+.btn-ver{background:linear-gradient(135deg,#9c3d00,#5a1a00);border:none;color:#FFD600;
+  border-radius:5px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-ver:hover{filter:brightness(1.2);}
+.btn-save{background:linear-gradient(135deg,#1d6b34,#0d3a1e);border:none;color:#80FFB0;
+  border-radius:5px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:1px;cursor:pointer;}
+.btn-save:hover{filter:brightness(1.2);}
+.btn-save:disabled{opacity:.5;cursor:not-allowed;}
+.status-msg{font-size:11px;letter-spacing:1px;padding:3px 10px;border-radius:4px;}
+.status-saved{color:#80FFB0;}
+.status-unsaved{color:#FFB347;}
+.status-info{color:#888;}
+.status-error{color:#ff6b6b;}
+
+.content-wrap{background:#120800;border:1px solid #5a2a00;border-top:none;
+  border-radius:0 0 8px 8px;padding:16px;overflow-x:auto;min-height:200px;}
+
+table.bonif-table{width:100%;border-collapse:collapse;min-width:500px;}
+.bonif-table th{background:#2a1000;color:#ffb97a;font-size:10px;letter-spacing:1px;
+  padding:9px 12px;text-align:center;border:1px solid #5a2a00;text-transform:uppercase;}
+.bonif-table th.th-agent{text-align:left;min-width:140px;}
+.bonif-table td{padding:6px 8px;text-align:center;border:1px solid #2a1000;vertical-align:middle;}
+.bonif-table tr:nth-child(odd) td{background:#1a0800;}
+.bonif-table tr:nth-child(even) td{background:#220d00;}
+.bonif-table tr:hover td{background:#2e1400;}
+.td-agent{color:#FFD600;font-weight:700;font-size:13px;letter-spacing:1px;text-align:left;padding-left:12px !important;}
+
+input.bonif-pct{width:75px;background:#0a0300;border:1px solid #5a2a00;color:#FFD600;
+  text-align:center;font-size:15px;font-weight:700;border-radius:4px;padding:4px 5px;
+  font-family:'Courier New',monospace;outline:none;transition:border-color .15s;}
+input.bonif-pct:focus{border-color:#FFD600;background:#150800;}
+input.bonif-pct::placeholder{color:#3a1a00;font-size:11px;}
+
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;}
+.badge-TM{background:#1a3a6b;color:#7aa8ff;}
+.badge-TT{background:#3a2800;color:#FFD600;}
+.badge-TN{background:#2a0d3a;color:#cc88ff;}
+.sec-title{color:#ffb97a;font-size:11px;letter-spacing:2px;margin:0 0 12px;font-weight:700;}
+.empty-msg{color:#3a2000;text-align:center;padding:30px;font-size:13px;letter-spacing:1px;}
+.loading-msg{color:#7a4a00;text-align:center;padding:30px;font-size:13px;letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-title">🎯 BONIFICACIONES</div>
+    <div class="login-sub">INGRESÁ TU PIN DE ACCESO</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="dot0"></div>
+      <div class="pin-dot" id="dot1"></div>
+      <div class="pin-dot" id="dot2"></div>
+      <div class="pin-dot" id="dot3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pinPress('1')">1</button>
+      <button class="pin-btn" onclick="pinPress('2')">2</button>
+      <button class="pin-btn" onclick="pinPress('3')">3</button>
+      <button class="pin-btn" onclick="pinPress('4')">4</button>
+      <button class="pin-btn" onclick="pinPress('5')">5</button>
+      <button class="pin-btn" onclick="pinPress('6')">6</button>
+      <button class="pin-btn" onclick="pinPress('7')">7</button>
+      <button class="pin-btn" onclick="pinPress('8')">8</button>
+      <button class="pin-btn" onclick="pinPress('9')">9</button>
+      <button class="pin-btn pin-clear" onclick="pinClear()">✕</button>
+      <button class="pin-btn" onclick="pinPress('0')">0</button>
+      <button class="pin-btn pin-clear" onclick="pinBack()">⌫</button>
+    </div>
+    <div class="pin-error" id="pinError"></div>
+  </div>
+</div>
+
+<!-- ── APP ── -->
+<div id="appScreen">
+  <div class="top-bar">
+    <div class="title">🎯 BONIFICACIONES POR TURNO Y AGENTE</div>
+    <button class="btn-logout" onclick="logout()">🔒 SALIR</button>
+  </div>
+  <div class="controls-bar">
+    <label>FECHA</label>
+    <input type="date" id="inputFecha">
+    <button class="btn-ver" onclick="cargarDiaria()">🔍 VER</button>
+    <button class="btn-save" id="btnGuardar" onclick="guardar()" style="display:none;">💾 GUARDAR</button>
+    <span class="status-msg status-info" id="statusMsg"></span>
+  </div>
+  <div class="content-wrap" id="contentWrap">
+    <div class="empty-msg">Seleccioná una fecha y presioná VER.</div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCGRYyo9EmR0NB3TImzZIP4SuDpDwwMgVc",
+  authDomain: "planilla-perdidas---ganancias.firebaseapp.com",
+  projectId: "planilla-perdidas---ganancias",
+  storageBucket: "planilla-perdidas---ganancias.firebasestorage.app",
+  messagingSenderId: "179047310261",
+  appId: "1:179047310261:web:2e5ad044d98751985d2ffc"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db = getFirestore(fbApp);
+
+const PIN_CORRECTO = '1408';
+const AGENTS = [
+  {id:'AGE18',       label:'AGE 18'},
+  {id:'AGE19',       label:'AGE 19'},
+  {id:'AGE21',       label:'AGE 21'},
+  {id:'AGE22',       label:'AGE 22'},
+  {id:'AGE23',       label:'AGE 23'},
+  {id:'AGE24',       label:'AGE 24'},
+  {id:'AGE25',       label:'AGE 25'},
+  {id:'SIEMPREMONO', label:'SIEMPRE MONO'},
+];
+const SHIFTS = [
+  {key:'TM', label:'MAÑANA'},
+  {key:'TT', label:'TARDE'},
+  {key:'TN', label:'NOCHE'},
+];
+
+// ── PIN ──
+let pinBuffer = '';
+let autenticado = false;
+
+window.pinPress = function(d){
+  if(pinBuffer.length >= 4) return;
+  pinBuffer += d;
+  actualizarDots();
+  if(pinBuffer.length === 4) verificarPin();
+};
+window.pinBack = function(){
+  pinBuffer = pinBuffer.slice(0,-1);
+  actualizarDots();
+  document.getElementById('pinError').textContent = '';
+};
+window.pinClear = function(){
+  pinBuffer = '';
+  actualizarDots();
+  document.getElementById('pinError').textContent = '';
+};
+
+function actualizarDots(){
+  for(let i=0;i<4;i++){
+    document.getElementById('dot'+i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function verificarPin(){
+  if(pinBuffer === PIN_CORRECTO){
+    autenticado = true;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = '';
+    const hoy = new Date().toISOString().slice(0,10);
+    document.getElementById('inputFecha').value = hoy;
+    cargarDiaria();
+  } else {
+    document.getElementById('pinError').textContent = '❌ PIN incorrecto';
+    pinBuffer = '';
+    actualizarDots();
+    setTimeout(()=>{ document.getElementById('pinError').textContent=''; }, 2000);
+  }
+}
+
+window.logout = function(){
+  autenticado = false;
+  pinBuffer = '';
+  actualizarDots();
+  document.getElementById('appScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('contentWrap').innerHTML = '<div class="empty-msg">Seleccioná una fecha y presioná VER.</div>';
+};
+
+// ── FIREBASE ──
+async function getBonifFromFirebase(dk){
+  try{
+    const snap = await getDoc(doc(db, 'bonificaciones', dk));
+    return snap.exists() ? snap.data() : {};
+  } catch(e){ return {}; }
+}
+
+async function saveBonifToFirebase(dk, data){
+  await setDoc(doc(db, 'bonificaciones', dk), data);
+}
+
+// ── APP ──
+window.cargarDiaria = async function(){
+  if(!autenticado) return;
+  const dk = document.getElementById('inputFecha').value;
+  if(!dk){ setStatus('Seleccioná una fecha.','info'); return; }
+
+  document.getElementById('btnGuardar').style.display = 'none';
+  setStatus('⏳ Cargando...','info');
+  document.getElementById('contentWrap').innerHTML = '<div class="loading-msg">⏳ Cargando datos...</div>';
+
+  const data = await getBonifFromFirebase(dk);
+
+  const [yy,mm,dd] = dk.split('-');
+  const dias = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
+  const diaLbl = dias[new Date(dk+'T12:00:00').getDay()];
+
+  let html = `<div class="sec-title">📅 ${diaLbl} ${dd}/${mm}/${yy}</div>`;
+  html += `<table class="bonif-table">
+    <thead><tr>
+      <th class="th-agent">AGENTE</th>
+      <th><span class="badge badge-TM">TM</span> MAÑANA</th>
+      <th><span class="badge badge-TT">TT</span> TARDE</th>
+      <th><span class="badge badge-TN">TN</span> NOCHE</th>
+    </tr></thead><tbody>`;
+
+  AGENTS.forEach(ag=>{
+    html += `<tr><td class="td-agent">${ag.label}</td>`;
+    SHIFTS.forEach(sh=>{
+      const v = data[ag.id]?.[sh.key] || '';
+      html += `<td><input class="bonif-pct" type="number" min="0" max="100" step="0.5"
+        placeholder="%" value="${v}"
+        data-ag="${ag.id}" data-sh="${sh.key}" data-dk="${dk}"
+        oninput="onInput()"></td>`;
+    });
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table>
+  <div style="color:#3a2000;font-size:10px;margin-top:12px;letter-spacing:1px;">* Ingresá el % de bonificación por turno. Ejemplo: 10 = 10%</div>`;
+
+  document.getElementById('contentWrap').innerHTML = html;
+  document.getElementById('btnGuardar').style.display = '';
+  setStatus('Datos cargados.','info');
+};
+
+window.onInput = function(){
+  setStatus('⚠ Cambios sin guardar','unsaved');
+};
+
+window.guardar = async function(){
+  if(!autenticado) return;
+  const inputs = document.querySelectorAll('#contentWrap input.bonif-pct');
+  const btnG = document.getElementById('btnGuardar');
+  btnG.disabled = true;
+  setStatus('💾 Guardando...','info');
+
+  const byDate = {};
+  inputs.forEach(el=>{
+    const {dk, ag, sh} = el.dataset;
+    const val = el.value.trim();
+    if(!byDate[dk]) byDate[dk] = {};
+    if(!byDate[dk][ag]) byDate[dk][ag] = {};
+    if(val !== '' && val !== '0') byDate[dk][ag][sh] = val;
+  });
+
+  try{
+    for(const [dk, data] of Object.entries(byDate)){
+      // Traer datos existentes y mergear
+      const existing = await getBonifFromFirebase(dk);
+      const merged = {...existing};
+      AGENTS.forEach(ag=>{
+        if(!merged[ag.id]) merged[ag.id] = {};
+        SHIFTS.forEach(sh=>{
+          if(data[ag.id]?.[sh.key]) merged[ag.id][sh.key] = data[ag.id][sh.key];
+          else delete merged[ag.id]?.[sh.key];
+        });
+        if(merged[ag.id] && Object.keys(merged[ag.id]).length===0) delete merged[ag.id];
+      });
+      await saveBonifToFirebase(dk, merged);
+    }
+    setStatus('✅ Guardado en Firebase','saved');
+  } catch(e){
+    setStatus('❌ Error al guardar: '+e.message,'error');
+  }
+  btnG.disabled = false;
+};
+
+function setStatus(msg, type){
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = 'status-msg status-'+type;
+}
+
+// Init fecha
+document.getElementById('inputFecha').value = new Date().toISOString().slice(0,10);
+</script>
+</body>
+</html>
