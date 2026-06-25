@@ -661,6 +661,14 @@ updateClock();
 
 // ── PIN DASHBOARD ──
 var DPIN = '200417';
+
+// Soporte teclado físico
+document.addEventListener('keydown', function(e){
+  if(document.getElementById('pinScreen').style.display === 'none') return;
+  if(e.key >= '0' && e.key <= '9') dpp(e.key);
+  else if(e.key === 'Backspace') dpb();
+  else if(e.key === 'Escape') dpc();
+});
 var dpBuf = '';
 function dpp(d){
   if(dpBuf.length>=6) return;
