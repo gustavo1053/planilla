@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BONIFICACIONES</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#0a0500;font-family:Calibri,Arial,sans-serif;font-size:13px;color:#ffb97a;min-height:100vh;padding:16px;}
+#loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:90vh;}
+.login-box{background:#1a0800;border:1px solid #7a2900;border-radius:10px;padding:36px 40px;display:flex;flex-direction:column;align-items:center;gap:16px;min-width:280px;}
+.login-title{color:#FFD600;font-size:20px;font-weight:700;letter-spacing:3px;}
+.login-sub{color:#7a4a00;font-size:11px;letter-spacing:2px;}
+.pin-dots{display:flex;gap:12px;}
+.pin-dot{width:16px;height:16px;border-radius:50%;border:2px solid #5a2a00;background:transparent;transition:all .2s;}
+.pin-dot.filled{background:#FFD600;border-color:#FFD600;}
+.pin-pad{display:grid;grid-template-columns:repeat(3,64px);gap:8px;}
+.pin-btn{width:64px;height:48px;background:#1a0800;border:1px solid #5a2a00;color:#FFD600;font-size:18px;font-weight:700;border-radius:6px;cursor:pointer;}
+.pin-btn:hover{background:#2e1400;}
+.pin-err{color:#ff6b6b;font-size:12px;min-height:18px;text-align:center;}
+#appScreen{display:none;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,#5a1a00,#9c3d00);padding:12px 20px;border-radius:8px 8px 0 0;}
+.top-title{font-size:17px;font-weight:700;letter-spacing:2px;color:#FFD600;}
+.tab-btn{background:#2a1000;border:1px solid #7a2900;color:#aaa;border-radius:6px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;}
+.tab-btn.active{background:#9c3d00;color:#FFD600;border-color:#FFD600;}
+.btn-salir{background:transparent;border:1px solid rgba(255,255,255,.2);color:#ffb97a;font-size:11px;font-weight:700;padding:5px 14px;border-radius:4px;cursor:pointer;}
+.ctrl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#1a0800;padding:10px 16px;border:1px solid #5a2a00;border-top:none;}
+.ctrl label{color:#ffb97a;font-size:11px;font-weight:700;letter-spacing:1px;}
+.ctrl input{background:#0a0500;border:1px solid #7a2900;color:#FFD600;border-radius:5px;padding:4px 10px;font-size:13px;font-weight:700;outline:none;}
+.btn-ver{background:linear-gradient(135deg,#9c3d00,#5a1a00);border:none;color:#FFD600;border-radius:5px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-guardar{background:linear-gradient(135deg,#1d6b34,#0d3a1e);border:none;color:#80FFB0;border-radius:5px;padding:7px 18px;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-guardar:disabled{opacity:.4;cursor:not-allowed;}
+.st{font-size:11px;letter-spacing:1px;}
+.cwrap{background:#120800;border:1px solid #5a2a00;border-top:none;border-radius:0 0 8px 8px;padding:16px;overflow-x:auto;min-height:200px;}
+table.bt{width:100%;border-collapse:collapse;min-width:500px;}
+.bt th{background:#2a1000;color:#ffb97a;font-size:10px;letter-spacing:1px;padding:9px 12px;text-align:center;border:1px solid #5a2a00;text-transform:uppercase;}
+.bt td{padding:6px 8px;text-align:center;border:1px solid #2a1000;vertical-align:middle;}
+.bt tr:nth-child(odd) td{background:#1a0800;}
+.bt tr:nth-child(even) td{background:#220d00;}
+.tda{color:#FFD600;font-weight:700;font-size:13px;text-align:left !important;padding-left:12px !important;}
+input.bp{width:75px;background:#0a0300;border:1px solid #5a2a00;color:#FFD600;text-align:center;font-size:15px;font-weight:700;border-radius:4px;padding:4px 5px;font-family:monospace;outline:none;}
+input.bp:focus{border-color:#FFD600;}
+.bdg{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;}
+.bdg-TM{background:#1a3a6b;color:#7aa8ff;}
+.bdg-TT{background:#3a2800;color:#FFD600;}
+.bdg-TN{background:#2a0d3a;color:#cc88ff;}
+table.mt{width:100%;border-collapse:collapse;min-width:600px;}
+.mt th{background:#2a1000;color:#ffb97a;font-size:10px;letter-spacing:1px;padding:9px 12px;text-align:center;border:1px solid #5a2a00;text-transform:uppercase;}
+.mt td{padding:7px 12px;text-align:center;border:1px solid #2a1000;font-size:12px;vertical-align:middle;}
+.mt tr:nth-child(odd) td{background:#1a0800;}
+.mt tr:nth-child(even) td{background:#220d00;}
+.pv{color:#FFD600;font-weight:700;font-family:monospace;font-size:13px;}
+.pz{color:#3a2000;}
+.pd{color:#888;font-size:11px;}
+.pp{color:#FF8C00;font-weight:700;font-family:monospace;font-size:14px;}
+.tr-tot td{background:linear-gradient(135deg,#5a1a00,#9c3d00)!important;color:#fff;font-weight:700;border:1px solid #FFD600!important;}
+.emptymsg{color:#3a2000;text-align:center;padding:30px;font-size:13px;}
+.loadmsg{color:#7a4a00;text-align:center;padding:30px;font-size:13px;}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-title">🎯 BONIFICACIONES</div>
+    <div class="login-sub">INGRESÁ TU PIN</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="d0"></div>
+      <div class="pin-dot" id="d1"></div>
+      <div class="pin-dot" id="d2"></div>
+      <div class="pin-dot" id="d3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pp('1')">1</button>
+      <button class="pin-btn" onclick="pp('2')">2</button>
+      <button class="pin-btn" onclick="pp('3')">3</button>
+      <button class="pin-btn" onclick="pp('4')">4</button>
+      <button class="pin-btn" onclick="pp('5')">5</button>
+      <button class="pin-btn" onclick="pp('6')">6</button>
+      <button class="pin-btn" onclick="pp('7')">7</button>
+      <button class="pin-btn" onclick="pp('8')">8</button>
+      <button class="pin-btn" onclick="pp('9')">9</button>
+      <button class="pin-btn" style="color:#ff6b6b;" onclick="pc()">✕</button>
+      <button class="pin-btn" onclick="pp('0')">0</button>
+      <button class="pin-btn" style="color:#ff6b6b;" onclick="pb()">⌫</button>
+    </div>
+    <div class="pin-err" id="pinErr"></div>
+  </div>
+</div>
+
+<div id="appScreen">
+  <div class="top-bar">
+    <div class="top-title">🎯 BONIFICACIONES</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span id="modeTabs" style="display:none;">
+        <button class="tab-btn active" id="btnD" onclick="setTab('d')">📅 DIARIA</button>
+        <button class="tab-btn" id="btnM" onclick="setTab('m')">📆 MENSUAL</button>
+      </span>
+      <button class="btn-salir" id="btnSalir" style="display:none;" onclick="salir()">🔒 SALIR</button>
+    </div>
+  </div>
+  <div class="ctrl" id="ctrlD">
+    <label>FECHA</label>
+    <input type="date" id="iFecha">
+    <button class="btn-ver" onclick="verDiaria()">🔍 VER</button>
+    <button class="btn-guardar" id="btnG" style="display:none;" onclick="guardar()">💾 GUARDAR</button>
+    <span class="st" id="stD" style="color:#888;"></span>
+  </div>
+  <div class="ctrl" id="ctrlM" style="display:none;">
+    <label>MES</label>
+    <input type="month" id="iMes">
+    <button class="btn-ver" onclick="verMensual()">🔍 VER</button>
+    <span class="st" id="stM" style="color:#888;"></span>
+  </div>
+  <div class="cwrap" id="cw"><div class="emptymsg">Seleccioná una fecha y presioná VER.</div></div>
+</div>
+
+<script>
+var PIN = '1408';
+var esAdmin = false;
+var pinBuf = '';
+var db = null;
+var AGENTS = [
+  {id:'AGE18',lb:'AGE 18'},{id:'AGE19',lb:'AGE 19'},{id:'AGE21',lb:'AGE 21'},
+  {id:'AGE22',lb:'AGE 22'},{id:'AGE23',lb:'AGE 23'},{id:'AGE24',lb:'AGE 24'},
+  {id:'AGE25',lb:'AGE 25'},{id:'SIEMPREMONO',lb:'SIEMPRE MONO'}
+];
+var SHIFTS = [{k:'TM'},{k:'TT'},{k:'TN'}];
+var MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
+
+// Detectar admin por URL — ejecutar INMEDIATAMENTE sin esperar onload
+(function(){
+  var hoy = new Date().toISOString().slice(0,10);
+  // Setear fechas apenas el DOM esté listo
+  document.addEventListener('DOMContentLoaded', function(){
+    document.getElementById('iFecha').value = hoy;
+    document.getElementById('iMes').value = hoy.slice(0,7);
+    var isAdmin = window.location.search.indexOf('admin=1') !== -1;
+    if(isAdmin){
+      esAdmin = true;
+      abrirApp(true);
+    }
+    // Si no es admin, el loginScreen ya está visible por defecto
+  });
+})();
+
+function initFirebase(){
+  if(db) return;
+  // Cargar Firebase dinámicamente
+  var s1 = document.createElement('script');
+  s1.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+  s1.onload = function(){
+    var s2 = document.createElement('script');
+    s2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js';
+    s2.onload = function(){
+      if(!firebase.apps.length){
+        firebase.initializeApp({
+          apiKey:"AIzaSyCGRYyo9EmR0NB3TImzZIP4SuDpDwwMgVc",
+          authDomain:"planilla-perdidas---ganancias.firebaseapp.com",
+          projectId:"planilla-perdidas---ganancias",
+          storageBucket:"planilla-perdidas---ganancias.firebasestorage.app",
+          messagingSenderId:"179047310261",
+          appId:"1:179047310261:web:2e5ad044d98751985d2ffc"
+        });
+      }
+      db = firebase.firestore();
+    };
+    document.head.appendChild(s2);
+  };
+  document.head.appendChild(s1);
+}
+
+function abrirApp(admin){
+  try {
+    var ls = document.getElementById('loginScreen');
+    var as = document.getElementById('appScreen');
+    if(!ls){ document.body.innerHTML='<p style="color:red;padding:20px;">ERROR: loginScreen no existe</p>'; return; }
+    if(!as){ document.body.innerHTML='<p style="color:red;padding:20px;">ERROR: appScreen no existe</p>'; return; }
+    ls.style.display = 'none';
+    as.style.display = 'block';
+    var mt = document.getElementById('modeTabs');
+    var bs = document.getElementById('btnSalir');
+    if(mt) mt.style.display = admin ? 'inline-flex' : 'none';
+    if(bs) bs.style.display = admin ? 'none' : '';
+    initFirebase();
+  } catch(e) {
+    document.body.innerHTML='<p style="color:red;padding:20px;">ERROR abrirApp: '+e.message+'</p>';
+  }
+}
+
+// PIN
+function pp(d){ if(pinBuf.length>=4) return; pinBuf+=d; dots(); if(pinBuf.length===4) chk(); }
+function pb(){ pinBuf=pinBuf.slice(0,-1); dots(); document.getElementById('pinErr').textContent=''; }
+function pc(){ pinBuf=''; dots(); document.getElementById('pinErr').textContent=''; }
+function dots(){ for(var i=0;i<4;i++) document.getElementById('d'+i).classList.toggle('filled',i<pinBuf.length); }
+function chk(){
+  if(pinBuf===PIN){ esAdmin=false; abrirApp(false); }
+  else{
+    document.getElementById('pinErr').textContent='❌ PIN incorrecto';
+    pinBuf=''; dots();
+    setTimeout(function(){ document.getElementById('pinErr').textContent=''; },2000);
+  }
+}
+function salir(){
+  pinBuf=''; dots();
+  document.getElementById('appScreen').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+
+function setTab(t){
+  document.getElementById('btnD').classList.toggle('active',t==='d');
+  document.getElementById('btnM').classList.toggle('active',t==='m');
+  document.getElementById('ctrlD').style.display=t==='d'?'flex':'none';
+  document.getElementById('ctrlM').style.display=t==='m'?'flex':'none';
+  document.getElementById('btnG').style.display='none';
+  document.getElementById('cw').innerHTML='<div class="emptymsg">Presioná VER.</div>';
+}
+
+function getFB(dk,cb){
+  if(!db){ setTimeout(function(){ getFB(dk,cb); },300); return; }
+  db.collection('bonificaciones').doc(dk).get()
+    .then(function(s){ cb(s.exists?s.data():{}); })
+    .catch(function(){ cb({}); });
+}
+function setFB(dk,data,cb){
+  if(!db){ setTimeout(function(){ setFB(dk,data,cb); },300); return; }
+  db.collection('bonificaciones').doc(dk).set(data).then(function(){ cb(null); }).catch(cb);
+}
+
+function verDiaria(){
+  var dk=document.getElementById('iFecha').value;
+  if(!dk){ st('Seleccioná una fecha.','#888'); return; }
+  document.getElementById('btnG').style.display='none';
+  st('⏳ Cargando...','#888');
+  document.getElementById('cw').innerHTML='<div class="loadmsg">⏳ Cargando...</div>';
+  getFB(dk,function(data){
+    var p=dk.split('-'),yy=p[0],mm=p[1],dd=p[2];
+    var dias=['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'];
+    var dl=dias[new Date(dk+'T12:00:00').getDay()];
+    var h='<div style="color:#ffb97a;font-size:11px;letter-spacing:2px;margin-bottom:10px;">📅 '+dl+' <b style="color:#FFD600">'+dd+'/'+mm+'/'+yy+'</b></div>';
+    h+='<table class="bt"><thead><tr><th style="text-align:left;min-width:140px;">AGENTE</th>';
+    h+='<th><span class="bdg bdg-TM">TM</span> MAÑANA</th><th><span class="bdg bdg-TT">TT</span> TARDE</th><th><span class="bdg bdg-TN">TN</span> NOCHE</th></tr></thead><tbody>';
+    AGENTS.forEach(function(ag){
+      h+='<tr><td class="tda">'+ag.lb+'</td>';
+      SHIFTS.forEach(function(sh){
+        var v=(data[ag.id]&&data[ag.id][sh.k])||'';
+        h+='<td><input class="bp" type="number" min="0" max="100" step="0.5" placeholder="%" value="'+v+'" data-ag="'+ag.id+'" data-sh="'+sh.k+'" data-dk="'+dk+'" oninput="st(\'⚠ Sin guardar\',\'#FFB347\')"></td>';
+      });
+      h+='</tr>';
+    });
+    h+='</tbody></table><div style="color:#3a2000;font-size:10px;margin-top:12px;">* % de bonificación. Ej: 10 = 10%</div>';
+    document.getElementById('cw').innerHTML=h;
+    document.getElementById('btnG').style.display='';
+    st('Cargado.','#888');
+  });
+}
+
+function guardar(){
+  var inputs=document.querySelectorAll('#cw input.bp');
+  var btn=document.getElementById('btnG');
+  btn.disabled=true; st('💾 Guardando...','#888');
+  var byDk={};
+  inputs.forEach(function(el){
+    var dk=el.dataset.dk,ag=el.dataset.ag,sh=el.dataset.sh,v=el.value.trim();
+    if(!byDk[dk]) byDk[dk]={};
+    if(!byDk[dk][ag]) byDk[dk][ag]={};
+    if(v&&v!=='0') byDk[dk][ag][sh]=v;
+  });
+  var dks=Object.keys(byDk);
+  if(!dks.length){ st('Sin datos.','#888'); btn.disabled=false; return; }
+  var dk=dks[0];
+  getFB(dk,function(ex){
+    var m=Object.assign({},ex);
+    AGENTS.forEach(function(ag){
+      if(!m[ag.id]) m[ag.id]={};
+      SHIFTS.forEach(function(sh){
+        if(byDk[dk][ag.id]&&byDk[dk][ag.id][sh.k]) m[ag.id][sh.k]=byDk[dk][ag.id][sh.k];
+        else delete m[ag.id][sh.k];
+      });
+      if(!Object.keys(m[ag.id]).length) delete m[ag.id];
+    });
+    setFB(dk,m,function(err){
+      st(err?'❌ Error':'✅ Guardado',err?'#ff6b6b':'#80FFB0');
+      btn.disabled=false;
+    });
+  });
+}
+
+function verMensual(){
+  if(!esAdmin) return;
+  var mes=document.getElementById('iMes').value;
+  if(!mes){ stM('Seleccioná un mes.','#888'); return; }
+  stM('⏳ Cargando...','#888');
+  document.getElementById('cw').innerHTML='<div class="loadmsg">⏳ Cargando...</div>';
+  var p=mes.split('-'),yy=p[0],mm=p[1];
+  var dias=new Date(parseInt(yy),parseInt(mm),0).getDate();
+  var ml=MESES[parseInt(mm)-1]+' '+yy;
+  var dkList=[];
+  for(var d=1;d<=dias;d++) dkList.push(yy+'-'+mm+'-'+(d<10?'0':'')+d);
+  var allData={},done=0,total=dkList.length;
+  dkList.forEach(function(dk){
+    getFB(dk,function(data){
+      if(Object.keys(data).length) allData[dk]=data;
+      done++;
+      if(done===total) renderM(yy,mm,ml,dkList,allData);
+    });
+  });
+}
+
+function renderM(yy,mm,ml,dkList,allData){
+  var dc=dkList.map(function(dk,i){return{dk:dk,d:i+1};}).filter(function(x){return!!allData[x.dk];});
+  var tot={},cnt={};
+  AGENTS.forEach(function(ag){tot[ag.id]={};cnt[ag.id]={};SHIFTS.forEach(function(sh){tot[ag.id][sh.k]=0;cnt[ag.id][sh.k]=0;});});
+  dc.forEach(function(x){AGENTS.forEach(function(ag){SHIFTS.forEach(function(sh){var v=allData[x.dk]&&allData[x.dk][ag.id]&&allData[x.dk][ag.id][sh.k];if(v){tot[ag.id][sh.k]+=parseFloat(v)||0;cnt[ag.id][sh.k]++;;}});});});
+  var h='<div style="color:#ffb97a;font-size:11px;letter-spacing:2px;margin-bottom:12px;">📆 <b style="color:#FFD600">'+ml+'</b></div>';
+  h+='<table class="mt"><thead><tr><th style="text-align:left;min-width:140px;">AGENTE</th>';
+  h+='<th><span class="bdg bdg-TM">TM</span></th><th><span class="bdg bdg-TT">TT</span></th><th><span class="bdg bdg-TN">TN</span></th><th>DÍAS</th><th>PROM.</th></tr></thead><tbody>';
+  var ts=0,tc=0;
+  AGENTS.forEach(function(ag){
+    var pr={},as=0,ac=0;
+    SHIFTS.forEach(function(sh){pr[sh.k]=cnt[ag.id][sh.k]>0?tot[ag.id][sh.k]/cnt[ag.id][sh.k]:null;if(pr[sh.k]!==null){as+=tot[ag.id][sh.k];ac+=cnt[ag.id][sh.k];}});
+    var di=Math.max.apply(null,SHIFTS.map(function(sh){return cnt[ag.id][sh.k];}));
+    var pg=ac>0?as/ac:null;if(pg!==null){ts+=as;tc+=ac;}
+    h+='<tr><td class="tda">'+ag.lb+'</td>';
+    SHIFTS.forEach(function(sh){h+=pr[sh.k]===null?'<td class="pz">—</td>':'<td class="pv">'+pr[sh.k].toFixed(1)+'%</td>';});
+    h+='<td class="pd">'+(di>0?di:'—')+'</td><td class="'+(pg!==null?'pp':'pz')+'">'+(pg!==null?pg.toFixed(1)+'%':'—')+'</td></tr>';
+  });
+  var pt=tc>0?ts/tc:null;
+  h+='<tr class="tr-tot"><td style="color:#FFD600;padding-left:12px;">PROMEDIO GRAL.</td><td colspan="3"></td><td class="pd">'+dc.length+' días</td><td class="'+(pt!==null?'pp':'pz')+'">'+(pt!==null?pt.toFixed(1)+'%':'—')+'</td></tr></tbody></table>';
+  if(dc.length){
+    h+='<div style="color:#ffb97a;font-size:11px;letter-spacing:2px;margin:16px 0 10px;">📋 DETALLE — '+ml+'</div><div style="overflow-x:auto;"><table class="bt" style="min-width:auto;"><thead><tr><th>FECHA</th>';
+    AGENTS.forEach(function(ag){h+='<th colspan="3">'+ag.lb+'</th>';});
+    h+='</tr><tr><th></th>';
+    AGENTS.forEach(function(){SHIFTS.forEach(function(sh){h+='<th style="font-size:9px;padding:3px;"><span class="bdg bdg-'+sh.k+'">'+sh.k+'</span></th>';});});
+    h+='</tr></thead><tbody>';
+    dc.forEach(function(x){
+      h+='<tr><td style="color:#FFD600;font-size:11px;font-weight:700;text-align:center;">'+(x.d<10?'0':'')+x.d+'/'+mm+'</td>';
+      AGENTS.forEach(function(ag){SHIFTS.forEach(function(sh){var v=allData[x.dk]&&allData[x.dk][ag.id]&&allData[x.dk][ag.id][sh.k];h+=v?'<td style="color:#FF8C00;font-family:monospace;">'+parseFloat(v).toFixed(1)+'%</td>':'<td class="pz">—</td>';});});
+      h+='</tr>';
+    });
+    h+='</tbody></table></div>';
+  }
+  document.getElementById('cw').innerHTML=h;
+  stM(dc.length+' días cargados.','#80FFB0');
+}
+
+function st(m,c){ var e=document.getElementById('stD'); e.textContent=m; e.style.color=c; }
+function stM(m,c){ var e=document.getElementById('stM'); e.textContent=m; e.style.color=c; }
+</script>
+</body>
+</html>
