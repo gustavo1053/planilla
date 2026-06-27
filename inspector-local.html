@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Inspector localStorage</title>
+<style>
+  body{background:#0f0f0f;color:#e0e0e0;font-family:monospace;padding:20px;}
+  pre{background:#1a1a1a;padding:16px;border-radius:8px;border:1px solid #333;overflow:auto;font-size:0.78rem;white-space:pre-wrap;word-break:break-all;max-height:80vh;}
+  h2{color:#f0a500;margin-bottom:12px;}
+  .ok{color:#4caf7d;} .err{color:#e05c5c;} .warn{color:#f0a500;}
+  button{background:#f0a500;color:#000;border:none;padding:8px 18px;border-radius:6px;font-weight:700;cursor:pointer;margin:4px;}
+</style>
+</head>
+<body>
+<h2>🔍 Inspector turnosData</h2>
+<button onclick="inspecionar()">VER ESTRUCTURA</button>
+<button onclick="verFechas()">VER FECHAS DISPONIBLES</button>
+<button onclick="verPrimerDoc()">VER PRIMER REGISTRO COMPLETO</button>
+<pre id="out">Hacé clic en un botón...</pre>
+<script>
+function inspecionar(){
+  const out = document.getElementById('out');
+  const raw = localStorage.getItem('turnosData');
+  if(!raw){ out.innerHTML='<span class="err">No hay turnosData en localStorage</span>'; return; }
+  const td = JSON.parse(raw);
+  const agentes = Object.keys(td);
+  let txt = `<span class="ok">✅ turnosData encontrado\n\n</span>`;
+  txt += `Agentes (keys): ${JSON.stringify(agentes)}\n\n`;
+  agentes.forEach(ag => {
+    const fechas = Object.keys(td[ag]);
+    txt += `<span class="warn">── ${ag} → ${fechas.length} fechas</span>\n`;
+    txt += `   Primeras: ${fechas.slice(0,3).join(', ')}\n`;
+    txt += `   Últimas:  ${fechas.slice(-3).join(', ')}\n\n`;
+  });
+  out.innerHTML = txt;
+}
+
+function verFechas(){
+  const out = document.getElementById('out');
+  const raw = localStorage.getItem('turnosData');
+  if(!raw){ out.innerHTML='<span class="err">No hay turnosData</span>'; return; }
+  const td = JSON.parse(raw);
+  const agentes = Object.keys(td);
+  let txt = '';
+  agentes.forEach(ag => {
+    const fechas = Object.keys(td[ag]).sort();
+    txt += `<span class="warn">${ag}</span>: ${fechas.length} fechas\n`;
+    txt += `  Desde: ${fechas[0]}\n  Hasta: ${fechas[fechas.length-1]}\n\n`;
+  });
+  out.innerHTML = txt || '<span class="err">Sin datos</span>';
+}
+
+function verPrimerDoc(){
+  const out = document.getElementById('out');
+  const raw = localStorage.getItem('turnosData');
+  if(!raw){ out.innerHTML='<span class="err">No hay turnosData</span>'; return; }
+  const td = JSON.parse(raw);
+  const ag = Object.keys(td)[0];
+  const fechas = Object.keys(td[ag]);
+  const fecha = fechas[fechas.length-1]; // última fecha
+  const doc = td[ag][fecha];
+  out.innerHTML = `<span class="ok">Agente: ${ag} | Fecha: ${fecha}\n\n</span>${JSON.stringify(doc, null, 2)}`;
+}
+</script>
+</body>
+</html>
