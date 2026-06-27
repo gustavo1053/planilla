@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis de Agentes - Recaudación</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root {
+    --bg:#0f0f0f; --card:#1a1a1a; --card2:#222; --border:#333;
+    --accent:#f0a500; --green:#4caf7d; --red:#e05c5c; --yellow:#f0a500;
+    --text:#e0e0e0; --muted:#888;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;min-height:100vh;}
+
+  header{background:var(--card);border-bottom:2px solid var(--accent);padding:14px 20px;display:flex;align-items:center;gap:14px;}
+  header h1{font-size:1.1rem;color:var(--accent);letter-spacing:1px;text-transform:uppercase;}
+  header .sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+  .back-btn{background:#333;border:none;color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.8rem;text-decoration:none;margin-left:auto;}
+  .back-btn:hover{background:#444;}
+
+  .container{max-width:1100px;margin:0 auto;padding:20px 16px;}
+
+  .periodo-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .periodo-bar label{font-size:0.82rem;color:var(--muted);}
+  .periodo-bar select,.periodo-bar input{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:0.82rem;}
+  .btn-analizar{background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:700;font-size:0.82rem;cursor:pointer;text-transform:uppercase;}
+  .btn-analizar:hover{background:#e09800;}
+
+  .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:0.9rem;display:none;}
+  .loading .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading .prog{font-size:0.75rem;margin-top:8px;color:#666;}
+
+  .resumen-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+  .stat-card .label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+  .stat-card .value{font-size:1.3rem;font-weight:700;color:var(--accent);}
+  .stat-card .sub-val{font-size:0.75rem;color:var(--muted);margin-top:4px;}
+
+  .section-title{font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;margin-top:24px;border-left:3px solid var(--accent);padding-left:10px;}
+
+  .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+  table{width:100%;border-collapse:collapse;font-size:0.83rem;}
+  thead{background:#252525;}
+  thead th{padding:10px 14px;text-align:left;color:var(--muted);font-weight:600;text-transform:uppercase;font-size:0.72rem;letter-spacing:0.5px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;white-space:nowrap;}
+  thead th:hover{color:var(--accent);}
+  tbody tr{border-bottom:1px solid #1e1e1e;transition:background 0.15s;}
+  tbody tr:hover{background:#1f1f1f;}
+  tbody td{padding:10px 14px;}
+
+  .agent-name{font-weight:600;}
+  .badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:0.7rem;font-weight:700;text-transform:uppercase;}
+  .badge-rojo{background:rgba(224,92,92,0.15);color:var(--red);border:1px solid rgba(224,92,92,0.3);}
+  .badge-amarillo{background:rgba(240,165,0,0.15);color:var(--yellow);border:1px solid rgba(240,165,0,0.3);}
+  .badge-verde{background:rgba(76,175,125,0.15);color:var(--green);border:1px solid rgba(76,175,125,0.3);}
+
+  .bar-cell{display:flex;align-items:center;gap:8px;}
+  .bar-bg{flex:1;height:6px;background:#2a2a2a;border-radius:3px;min-width:60px;}
+  .bar-fill{height:6px;border-radius:3px;}
+
+  .chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:24px;}
+  canvas{max-height:280px;}
+
+  .shift-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:14px;}
+  .shift-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px;}
+  .shift-card h4{font-size:0.82rem;color:var(--accent);margin-bottom:10px;}
+  .shift-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #1e1e1e;font-size:0.78rem;}
+  .shift-row:last-child{border:none;}
+  .shift-name{color:var(--muted);}
+
+  .fusion-box{background:var(--card);border:1px solid #3a3a2a;border-left:4px solid var(--accent);border-radius:10px;padding:18px 20px;margin-top:24px;}
+  .fusion-box h3{color:var(--accent);font-size:0.9rem;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.5px;}
+  .fusion-pair{display:flex;align-items:center;gap:10px;background:#1e1e16;border-radius:8px;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap;}
+  .agente-tag{background:#2a2a1a;border:1px solid #4a4a2a;color:var(--yellow);padding:4px 12px;border-radius:6px;font-weight:700;font-size:0.85rem;}
+  .plus{color:var(--muted);font-size:1.2rem;}
+  .resultado{background:rgba(76,175,125,0.1);border:1px solid rgba(76,175,125,0.3);color:var(--green);padding:4px 12px;border-radius:6px;font-size:0.8rem;font-weight:600;}
+  .ahorro{margin-left:auto;font-size:0.78rem;color:var(--green);font-weight:600;}
+
+  .empty{text-align:center;padding:40px;color:var(--muted);font-size:0.85rem;}
+  .source-note{font-size:0.72rem;color:#555;margin-top:6px;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>📊 Análisis de Recaudación por Agente</h1>
+    <div class="sub">Comparativa para decisión de fusión · Fuente: turnosData (localStorage) + Firebase planilla</div>
+  </div>
+  <a href="https://planilla-liart.vercel.app/dashboard.html" class="back-btn">← Dashboard</a>
+</header>
+
+<div class="container">
+
+  <div class="periodo-bar">
+    <label>Período:</label>
+    <select id="selPeriodo">
+      <option value="1">Último mes</option>
+      <option value="2" selected>Últimos 2 meses</option>
+      <option value="3">Últimos 3 meses</option>
+      <option value="6">Últimos 6 meses</option>
+      <option value="0">Personalizado</option>
+    </select>
+    <span id="rangoCustom" style="display:none">
+      <input type="date" id="fechaDesde">
+      <span style="color:var(--muted)">→</span>
+      <input type="date" id="fechaHasta">
+    </span>
+    <button class="btn-analizar" onclick="cargarDatos()">ANALIZAR</button>
+    <span id="lblPeriodo" style="font-size:0.75rem;color:var(--muted);margin-left:auto;"></span>
+  </div>
+
+  <div class="loading" id="loading">
+    <div class="spinner"></div>
+    <div>Cargando datos...</div>
+    <div class="prog" id="progTxt"></div>
+  </div>
+
+  <div id="contenido" style="display:none">
+    <div class="resumen-grid" id="resumenGrid"></div>
+
+    <div class="chart-wrap">
+      <div class="section-title">Neto por agente (dep - ret)</div>
+      <canvas id="chartAgentes"></canvas>
+    </div>
+
+    <div class="section-title" style="margin-top:24px">Ranking de agentes por recaudación</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th onclick="sortBy('nombre')">AGENTE ↕</th>
+            <th onclick="sortBy('dep')">DEP TOTAL ↕</th>
+            <th onclick="sortBy('ret')">RET TOTAL ↕</th>
+            <th onclick="sortBy('neto')">NETO ↕</th>
+            <th onclick="sortBy('dias')">DÍAS ↕</th>
+            <th onclick="sortBy('promDia')">PROM/DÍA ↕</th>
+            <th>NIVEL</th>
+          </tr>
+        </thead>
+        <tbody id="tablaBody"></tbody>
+      </table>
+    </div>
+
+    <div class="section-title">Desglose por turno</div>
+    <div class="shift-grid" id="shiftGrid"></div>
+
+    <div class="fusion-box" id="fusionBox">
+      <h3>💡 Sugerencia de fusión</h3>
+      <div id="fusionContent"></div>
+    </div>
+
+  </div>
+
+  <div class="empty" id="sinDatos" style="display:none">No se encontraron datos para el período seleccionado.</div>
+
+</div>
+
+<script type="module">
+// ── FIREBASE (mismo proyecto que la planilla) ──────────────────────────────
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyBFsBFBSz6nYpIJlSxhwrFXAQsLjFoxCts",
+  authDomain:        "planilla-perdidas---ganancias.firebaseapp.com",
+  projectId:         "planilla-perdidas---ganancias",
+  storageBucket:     "planilla-perdidas---ganancias.firebasestorage.app",
+  messagingSenderId: "1090449460",
+  appId:             "1:1090449460:web:46e0e28da44a9a5d9e9b9b"
+};
+const fbApp = initializeApp(firebaseConfig);
+const db    = getFirestore(fbApp);
+
+// ── CONSTANTES (igual que la planilla) ────────────────────────────────────
+const AGENTS = [
+  { id:'AGE18',       label:'AGE 18',       turnosKey:'AG 18',        fbId:'AGE_18'       },
+  { id:'AGE19',       label:'AGE 19',       turnosKey:'AG 19',        fbId:'AGE_19'       },
+  { id:'AGE21',       label:'AGE 21',       turnosKey:'AG 21',        fbId:'AGE_20'       },
+  { id:'AGE22',       label:'AGE 22',       turnosKey:'AG 22',        fbId:'AGE_22'       },
+  { id:'AGE23',       label:'AGE 23',       turnosKey:'AG 23',        fbId:'AGE_23'       },
+  { id:'AGE24',       label:'AGE 24',       turnosKey:'AG 24',        fbId:'AGE_24'       },
+  { id:'AGE25',       label:'AGE 25',       turnosKey:'AG 25',        fbId:'AGE_25'       },
+  { id:'SIEMPREMONO', label:'SIEMPRE MONO', turnosKey:'SIEMPRE MONO', fbId:'SIEMPRE_MONO' },
+];
+
+// Campos de entradas y salidas desde turnosData (localStorage)
+const T_IN  = ['fichas','wallet1_monto','wallet2_monto','wallet3_monto','colab_rec','carga_fichas'];
+const T_OUT = ['fichas_out','wallet1_out_monto','wallet2_out_monto','wallet3_out_monto','bonos','descartes','colab_pag','pago_otros','carga_otros','retiro','sueldo'];
+const SHIFTS = [
+  { key:'TM', label:'Mañana', fbKey:'morning'   },
+  { key:'TT', label:'Tarde',  fbKey:'afternoon' },
+  { key:'TN', label:'Noche',  fbKey:'night'     },
+];
+
+const fmtMoney = n => '$' + Math.round(n).toLocaleString('es-AR');
+const numVal   = v => parseFloat(String(v||'').replace(/[^0-9.-]/g,'')) || 0;
+
+// ── PERÍODO ────────────────────────────────────────────────────────────────
+document.getElementById('selPeriodo').addEventListener('change', function(){
+  document.getElementById('rangoCustom').style.display = this.value==='0' ? 'inline-flex' : 'none';
+});
+
+function getFechas() {
+  const sel = document.getElementById('selPeriodo').value;
+  const hasta = new Date(); hasta.setHours(23,59,59,999);
+  if (sel === '0') {
+    const d = document.getElementById('fechaDesde').value;
+    const h = document.getElementById('fechaHasta').value;
+    if (!d||!h) { alert('Ingresá ambas fechas'); return null; }
+    return { desde: new Date(d+'T00:00:00'), hasta: new Date(h+'T23:59:59') };
+  }
+  const desde = new Date(); desde.setMonth(desde.getMonth()-parseInt(sel)); desde.setHours(0,0,0,0);
+  return { desde, hasta };
+}
+
+function dateKey(d) {
+  // formato YYYY-MM-DD
+  return d.toISOString().slice(0,10);
+}
+
+function getDatesInRange(desde, hasta) {
+  const dates = [];
+  const cur = new Date(desde);
+  while (cur <= hasta) {
+    dates.push(dateKey(cur));
+    cur.setDate(cur.getDate()+1);
+  }
+  return dates;
+}
+
+// ── CARGA PRINCIPAL ────────────────────────────────────────────────────────
+window.cargarDatos = async function() {
+  const rango = getFechas();
+  if (!rango) return;
+
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('contenido').style.display = 'none';
+  document.getElementById('sinDatos').style.display = 'none';
+  document.getElementById('lblPeriodo').textContent =
+    `${rango.desde.toLocaleDateString('es-AR')} → ${rango.hasta.toLocaleDateString('es-AR')}`;
+
+  const prog = document.getElementById('progTxt');
+
+  // ── FUENTE 1: localStorage turnosData ────────────────────────────────────
+  prog.textContent = 'Leyendo localStorage...';
+  let turnosData = {};
+  try {
+    const raw = localStorage.getItem('turnosData');
+    if (raw) turnosData = JSON.parse(raw);
+  } catch(e) { console.warn('localStorage error', e); }
+
+  // ── FUENTE 2: Firebase colección "planilla" ───────────────────────────────
+  prog.textContent = 'Leyendo Firebase...';
+  const dates = getDatesInRange(rango.desde, rango.hasta);
+  const fbData = {}; // fbData[agId][dk][shKey] = { dep, ret }
+
+  for (const ag of AGENTS) {
+    fbData[ag.id] = {};
+    let loaded = 0;
+    for (const dk of dates) {
+      try {
+        const snap = await getDoc(doc(db, 'planilla', `${ag.fbId}__${dk}`));
+        if (snap.exists()) {
+          const d = snap.data();
+          fbData[ag.id][dk] = {};
+          for (const sh of SHIFTS) {
+            const deps = d[`${sh.fbKey}_dep`] || [];
+            const rets = d[`${sh.fbKey}_ret`] || [];
+            const dep  = (Array.isArray(deps)?deps:Object.values(deps)).reduce((a,v)=>a+numVal(v),0);
+            const ret  = (Array.isArray(rets)?rets:Object.values(rets)).reduce((a,v)=>a+numVal(v),0);
+            fbData[ag.id][dk][sh.key] = { dep, ret };
+          }
+          loaded++;
+        }
+      } catch(e) { /* doc no existe ese día */ }
+    }
+    prog.textContent = `Firebase: ${ag.label} — ${loaded} días con datos`;
+  }
+
+  // ── COMBINAR ──────────────────────────────────────────────────────────────
+  prog.textContent = 'Procesando...';
+  const resultado = AGENTS.map(ag => {
+    let dep=0, ret=0, dias=new Set();
+    const porTurno = {};
+    SHIFTS.forEach(sh => { porTurno[sh.key] = {dep:0,ret:0,n:0}; });
+
+    // Desde localStorage turnosData
+    const agData = turnosData[ag.turnosKey] || {};
+    for (const [dk, dayData] of Object.entries(agData)) {
+      const d = new Date(dk);
+      if (d < rango.desde || d > rango.hasta) continue;
+      for (const sh of SHIFTS) {
+        const raw = dayData[sh.key.toLowerCase()] || dayData[sh.label.toLowerCase()] || {};
+        // turnosKey shift keys son 'manana','tarde','noche'
+        const rawM = dayData['manana']||{}, rawT=dayData['tarde']||{}, rawN=dayData['noche']||{};
+        const rawSh = sh.key==='TM'?rawM : sh.key==='TT'?rawT : rawN;
+        const d_in  = T_IN.reduce((s,f)=>s+numVal(rawSh[f]),0);
+        const d_out = T_OUT.reduce((s,f)=>s+numVal(rawSh[f]),0);
+        if (d_in||d_out) {
+          dep += d_in; ret += d_out;
+          porTurno[sh.key].dep += d_in;
+          porTurno[sh.key].ret += d_out;
+          porTurno[sh.key].n++;
+          dias.add(dk);
+        }
+      }
+    }
+
+    // Desde Firebase (gan/perd — dep/ret)
+    for (const [dk, dayFb] of Object.entries(fbData[ag.id]||{})) {
+      const d = new Date(dk);
+      if (d < rango.desde || d > rango.hasta) continue;
+      for (const sh of SHIFTS) {
+        const v = dayFb[sh.key];
+        if (!v) continue;
+        // Solo sumar si no vino de localStorage (evitar duplicados)
+        const agLs = turnosData[ag.turnosKey]?.[dk];
+        if (!agLs) {
+          dep += v.dep; ret += v.ret;
+          porTurno[sh.key].dep += v.dep;
+          porTurno[sh.key].ret += v.ret;
+          porTurno[sh.key].n++;
+          dias.add(dk);
+        }
+      }
+    }
+
+    const neto = dep - ret;
+    const diasN = dias.size;
+    return { id:ag.id, nombre:ag.label, dep, ret, neto, dias:diasN, promDia: diasN>0?neto/diasN:0, porTurno };
+  }).filter(a => a.dep>0 || a.ret>0);
+
+  document.getElementById('loading').style.display = 'none';
+
+  if (resultado.length === 0) {
+    document.getElementById('sinDatos').style.display = 'block';
+    return;
+  }
+
+  window._datosAgentes = resultado.sort((a,b)=>b.neto-a.neto);
+  window._sortDir = {};
+  renderTodo();
+  document.getElementById('contenido').style.display = 'block';
+};
+
+// ── SORT ───────────────────────────────────────────────────────────────────
+window.sortBy = function(campo) {
+  window._sortDir[campo] = !window._sortDir[campo];
+  window._datosAgentes.sort((a,b)=>{
+    const va=a[campo], vb=b[campo];
+    if (typeof va==='string') return window._sortDir[campo]?va.localeCompare(vb):vb.localeCompare(va);
+    return window._sortDir[campo]?va-vb:vb-va;
+  });
+  renderTabla();
+};
+
+// ── RENDER ─────────────────────────────────────────────────────────────────
+function renderTodo() {
+  renderResumen();
+  renderChart();
+  renderTabla();
+  renderShifts();
+  renderFusion();
+}
+
+function renderResumen() {
+  const D = window._datosAgentes;
+  const totalDep = D.reduce((s,a)=>s+a.dep,0);
+  const totalNeto = D.reduce((s,a)=>s+a.neto,0);
+  const mejor = D[0], peor = D[D.length-1];
+  document.getElementById('resumenGrid').innerHTML = `
+    <div class="stat-card"><div class="label">Total depósitos período</div><div class="value">${fmtMoney(totalDep)}</div><div class="sub-val">${D.length} agentes con datos</div></div>
+    <div class="stat-card"><div class="label">Neto total</div><div class="value" style="color:${totalNeto>=0?'var(--green)':'var(--red)'}">${fmtMoney(totalNeto)}</div></div>
+    <div class="stat-card"><div class="label">Mayor recaudador</div><div class="value" style="color:var(--green);font-size:1rem">${mejor.nombre}</div><div class="sub-val">${fmtMoney(mejor.neto)} neto</div></div>
+    <div class="stat-card"><div class="label">Menor recaudador</div><div class="value" style="color:var(--red);font-size:1rem">${peor.nombre}</div><div class="sub-val">${fmtMoney(peor.neto)} neto</div></div>
+  `;
+}
+
+let chartInst = null;
+function renderChart() {
+  const D = window._datosAgentes;
+  const ctx = document.getElementById('chartAgentes').getContext('2d');
+  if (chartInst) chartInst.destroy();
+  const n = D.length;
+  const colors = D.map((_,i)=>{
+    const p = i/(n-1||1);
+    return p>=0.75?'rgba(224,92,92,0.75)':p>=0.40?'rgba(240,165,0,0.75)':'rgba(76,175,125,0.75)';
+  });
+  chartInst = new Chart(ctx, {
+    type:'bar',
+    data:{ labels:D.map(a=>a.nombre), datasets:[{ label:'Neto', data:D.map(a=>a.neto), backgroundColor:colors, borderRadius:6, borderSkipped:false }] },
+    options:{
+      responsive:true,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:c=>' Neto: '+fmtMoney(c.raw) } } },
+      scales:{
+        x:{ ticks:{color:'#888'}, grid:{color:'#1e1e1e'} },
+        y:{ ticks:{color:'#888',callback:v=>fmtMoney(v)}, grid:{color:'#1e1e1e'} }
+      }
+    }
+  });
+}
+
+function renderTabla() {
+  const D = window._datosAgentes;
+  const maxAbs = Math.max(...D.map(a=>Math.abs(a.neto)));
+  const n = D.length;
+  document.getElementById('tablaBody').innerHTML = D.map((a,i)=>{
+    const pct = maxAbs>0?Math.abs(a.neto)/maxAbs*100:0;
+    const color = a.neto>=0?'var(--green)':'var(--red)';
+    const pos = i/(n-1||1);
+    const [badge,nivel] = pos>=0.75?['badge-rojo','⚠ BAJO']:pos>=0.40?['badge-amarillo','◆ MEDIO']:['badge-verde','✓ ALTO'];
+    return `<tr>
+      <td style="color:var(--muted);font-size:0.78rem;font-weight:700">${i+1}</td>
+      <td style="font-weight:600">${a.nombre}</td>
+      <td>${fmtMoney(a.dep)}</td>
+      <td>${fmtMoney(a.ret)}</td>
+      <td><div class="bar-cell"><span style="color:${color};font-weight:600;min-width:100px">${fmtMoney(a.neto)}</span><div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${color}"></div></div></div></td>
+      <td>${a.dias}</td>
+      <td style="color:${color}">${fmtMoney(a.promDia)}</td>
+      <td><span class="badge ${badge}">${nivel}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderShifts() {
+  const D = window._datosAgentes;
+  document.getElementById('shiftGrid').innerHTML = D.map(a=>{
+    const rows = SHIFTS.map(sh=>{
+      const s = a.porTurno[sh.key];
+      if (!s||s.n===0) return '';
+      const neto=s.dep-s.ret;
+      const color=neto>=0?'var(--green)':'var(--red)';
+      return `<div class="shift-row"><span class="shift-name">${sh.label} (${s.n} días)</span><span style="font-weight:600;color:${color}">${fmtMoney(neto)}</span></div>`;
+    }).join('');
+    return `<div class="shift-card"><h4>${a.nombre}</h4>${rows||'<div style="color:var(--muted);font-size:0.75rem">Sin datos desglosados</div>'}</div>`;
+  }).join('');
+}
+
+function renderFusion() {
+  const sorted = [...window._datosAgentes].sort((a,b)=>a.neto-b.neto);
+  let html = '';
+  if (sorted.length>=2) {
+    const [p1,p2] = sorted;
+    html += `<div class="fusion-pair">
+      <span class="agente-tag">${p1.nombre}</span>
+      <span class="plus">+</span>
+      <span class="agente-tag">${p2.nombre}</span>
+      <span style="color:var(--muted)">→</span>
+      <span class="resultado">1 agente unificado</span>
+      <div class="ahorro">Neto combinado: ${fmtMoney(p1.neto+p2.neto)}</div>
+    </div>`;
+  }
+  if (sorted.length>=4) {
+    const [,,p3,p4] = sorted;
+    html += `<p style="font-size:0.75rem;color:var(--muted);margin:10px 0 8px">Alternativa:</p>
+    <div class="fusion-pair" style="opacity:0.7">
+      <span class="agente-tag">${p3.nombre}</span>
+      <span class="plus">+</span>
+      <span class="agente-tag">${p4.nombre}</span>
+      <span style="color:var(--muted)">→</span>
+      <span class="resultado">1 agente unificado</span>
+      <div class="ahorro">Neto: ${fmtMoney(p3.neto+p4.neto)}</div>
+    </div>`;
+  }
+  html += `<p style="font-size:0.75rem;color:var(--muted);margin-top:14px;line-height:1.6">
+    ⚠ Considerá también: zona geográfica de cada agente, carga de trabajo combinada por turno, y si el agente resultante puede manejar el volumen de ambos.
+  </p>`;
+  document.getElementById('fusionContent').innerHTML = html;
+}
+
+// Auto-cargar
+window.addEventListener('load', () => window.cargarDatos());
+</script>
+</body>
+</html>
