@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desglose de Agentes</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root{--bg:#0f0f0f;--card:#1a1a1a;--card2:#222;--border:#333;--accent:#f0a500;--green:#4caf7d;--red:#e05c5c;--yellow:#f0a500;--text:#e0e0e0;--muted:#888;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;}
+  header{background:var(--card);border-bottom:2px solid var(--accent);padding:14px 20px;display:flex;align-items:center;gap:14px;}
+  header h1{font-size:1.1rem;color:var(--accent);letter-spacing:1px;text-transform:uppercase;}
+  header .sub{font-size:0.75rem;color:var(--muted);margin-top:2px;}
+  .back-btn{background:#333;border:none;color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.8rem;text-decoration:none;margin-left:auto;}
+  .back-btn:hover{background:#444;}
+  .container{max-width:1200px;margin:0 auto;padding:20px 16px;}
+
+  .periodo-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .periodo-bar label{font-size:0.82rem;color:var(--muted);}
+  .periodo-bar select,.periodo-bar input{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-size:0.82rem;}
+  .btn-analizar{background:var(--accent);color:#000;border:none;padding:7px 18px;border-radius:6px;font-weight:700;font-size:0.82rem;cursor:pointer;text-transform:uppercase;}
+
+  /* TABS AGENTE */
+  .agent-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+  .atab{background:var(--card2);border:1px solid var(--border);color:var(--muted);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:0.78rem;font-weight:600;text-transform:uppercase;}
+  .atab:hover{border-color:var(--accent);color:var(--text);}
+  .atab.active{background:rgba(240,165,0,0.15);border-color:var(--accent);color:var(--accent);}
+
+  .section-title{font-size:0.78rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px;margin-top:24px;border-left:3px solid var(--accent);padding-left:10px;}
+
+  /* GRIDS */
+  .top-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:8px;}
+  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+  .stat-card .label{font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+  .stat-card .value{font-size:1.15rem;font-weight:700;color:var(--accent);}
+  .stat-card .sub{font-size:0.72rem;color:var(--muted);margin-top:3px;}
+
+  /* DESGLOSE POR TIPO */
+  .tipo-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:10px;}
+  .tipo-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+  .tipo-card .tname{font-size:0.72rem;color:var(--muted);text-transform:uppercase;margin-bottom:4px;}
+  .tipo-card .tval{font-size:1rem;font-weight:700;}
+  .tipo-card .tpct{font-size:0.7rem;color:var(--muted);margin-top:2px;}
+  .tipo-card .tbar{height:3px;background:#2a2a2a;border-radius:2px;margin-top:6px;}
+  .tipo-card .tbar-fill{height:3px;border-radius:2px;}
+
+  /* TABLA TURNOS */
+  .table-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);margin-top:10px;}
+  table{width:100%;border-collapse:collapse;font-size:0.8rem;}
+  thead{background:#252525;}
+  thead th{padding:9px 12px;text-align:left;color:var(--muted);font-weight:600;text-transform:uppercase;font-size:0.7rem;letter-spacing:0.5px;border-bottom:1px solid var(--border);}
+  tbody tr{border-bottom:1px solid #1e1e1e;}
+  tbody tr:hover{background:#1f1f1f;}
+  tbody td{padding:8px 12px;}
+  .subtotal{background:#1e1e1a;font-weight:700;}
+
+  /* TABLA SEMANAL */
+  .semana-table thead th{white-space:nowrap;}
+
+  /* CHARTS */
+  .charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px;}
+  .chart-box{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;}
+  .chart-box canvas{max-height:220px;}
+  @media(max-width:700px){.charts-row{grid-template-columns:1fr;}}
+
+  .loading{text-align:center;padding:60px;color:var(--muted);}
+  .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .empty{text-align:center;padding:40px;color:var(--muted);}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>📋 Desglose Completo por Agente</h1>
+    <div class="sub">Por tipo · Por turno · Por semana</div>
+  </div>
+  <a href="https://planilla-liart.vercel.app/dashboard.html" class="back-btn">← Dashboard</a>
+</header>
+
+<div class="container">
+  <div class="periodo-bar">
+    <label>Período:</label>
+    <select id="selPeriodo">
+      <option value="1">Último mes</option>
+      <option value="2" selected>Últimos 2 meses</option>
+      <option value="3">Últimos 3 meses</option>
+      <option value="6">Últimos 6 meses</option>
+      <option value="0">Personalizado</option>
+    </select>
+    <span id="rangoCustom" style="display:none;gap:6px;align-items:center;">
+      <input type="date" id="fechaDesde">
+      <span style="color:var(--muted)">→</span>
+      <input type="date" id="fechaHasta">
+    </span>
+    <button class="btn-analizar" onclick="cargarDatos()">ANALIZAR</button>
+    <span id="lblPeriodo" style="font-size:0.75rem;color:var(--muted);margin-left:auto;"></span>
+  </div>
+
+  <div class="loading" id="loading" style="display:none;">
+    <div class="spinner"></div>
+    Procesando datos...
+  </div>
+
+  <div id="contenido" style="display:none;">
+    <div class="agent-tabs" id="agentTabs"></div>
+    <div id="agentPanel"></div>
+  </div>
+
+  <div class="empty" id="sinDatos" style="display:none;">Sin datos para el período.</div>
+</div>
+
+<script>
+const AGENTS = [
+  {id:'AGE18', label:'AGE 18', lsKey:'AG 18'},
+  {id:'AGE19', label:'AGE 19', lsKey:'AG 19'},
+  {id:'AGE21', label:'AGE 21', lsKey:'AG 21'},
+  {id:'AGE22', label:'AGE 22', lsKey:'AG 22'},
+  {id:'AGE23', label:'AGE 23', lsKey:'AG 23'},
+  {id:'AGE24', label:'AGE 24', lsKey:'AG 24'},
+  {id:'AGE25', label:'AGE 25', lsKey:'AG 25'},
+  {id:'SIEMPREMONO', label:'SIEMPRE MONO', lsKey:'SIEMPRE MONO'},
+];
+const TURNOS = ['manana','tarde','noche'];
+const TURNO_LABEL = {manana:'Mañana', tarde:'Tarde', noche:'Noche'};
+
+// Campos de entrada y salida
+const TIPOS_IN = [
+  {key:'fichas',         label:'Fichas IN'},
+  {key:'wallet1_monto',  label:'Wallet 1'},
+  {key:'wallet2_monto',  label:'Wallet 2'},
+  {key:'wallet3_monto',  label:'Wallet 3'},
+  {key:'colab_rec',      label:'Colab Rec'},
+  {key:'carga_fichas',   label:'Carga Fichas'},
+];
+const TIPOS_OUT = [
+  {key:'fichas_out',         label:'Fichas OUT'},
+  {key:'wallet1_out_monto',  label:'Wallet 1 OUT'},
+  {key:'wallet2_out_monto',  label:'Wallet 2 OUT'},
+  {key:'wallet3_out_monto',  label:'Wallet 3 OUT'},
+  {key:'bonos',              label:'Bonos'},
+  {key:'descartes',          label:'Descartes'},
+  {key:'colab_pag',          label:'Colab Pag'},
+  {key:'pago_otros',         label:'Pago Otros'},
+  {key:'carga_otros',        label:'Carga Otros'},
+  {key:'retiro',             label:'Retiro'},
+  {key:'sueldo',             label:'Sueldo'},
+];
+
+const numVal = v => parseFloat(String(v||'').replace(/[^0-9.-]/g,''))||0;
+const fmt = n => '$'+Math.round(n).toLocaleString('es-AR');
+const fmtF = d => d.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit'});
+
+document.getElementById('selPeriodo').addEventListener('change',function(){
+  document.getElementById('rangoCustom').style.display=this.value==='0'?'flex':'none';
+});
+
+function getFechas(){
+  const sel=document.getElementById('selPeriodo').value;
+  const hasta=new Date(); hasta.setHours(23,59,59,999);
+  if(sel==='0'){
+    const d=document.getElementById('fechaDesde').value;
+    const h=document.getElementById('fechaHasta').value;
+    if(!d||!h){alert('Ingresá ambas fechas');return null;}
+    return{desde:new Date(d+'T00:00:00'),hasta:new Date(h+'T23:59:59')};
+  }
+  const desde=new Date(); desde.setMonth(desde.getMonth()-parseInt(sel)); desde.setHours(0,0,0,0);
+  return{desde,hasta};
+}
+
+function getWeekKey(dateStr){
+  const d=new Date(dateStr);
+  const day=d.getDay()||7;
+  d.setDate(d.getDate()-day+1);
+  return d.toISOString().slice(0,10);
+}
+
+let allData={};
+let chartInstances={};
+
+function cargarDatos(){
+  const rango=getFechas(); if(!rango)return;
+  document.getElementById('loading').style.display='block';
+  document.getElementById('contenido').style.display='none';
+  document.getElementById('sinDatos').style.display='none';
+  document.getElementById('lblPeriodo').textContent=
+    `${rango.desde.toLocaleDateString('es-AR')} → ${rango.hasta.toLocaleDateString('es-AR')}`;
+
+  let td={};
+  try{const r=localStorage.getItem('turnosData');if(r)td=JSON.parse(r);}catch(e){}
+
+  allData={};
+  for(const ag of AGENTS){
+    const agData=td[ag.lsKey]||{};
+    const dias={};
+    for(const [dk,dayObj] of Object.entries(agData)){
+      const d=new Date(dk);
+      if(d<rango.desde||d>rango.hasta)continue;
+      dias[dk]=dayObj;
+    }
+    allData[ag.id]={ag, dias};
+  }
+
+  const tieneAlgo=Object.values(allData).some(a=>Object.keys(a.dias).length>0);
+  document.getElementById('loading').style.display='none';
+  if(!tieneAlgo){document.getElementById('sinDatos').style.display='block';return;}
+
+  // Destruir charts anteriores
+  Object.values(chartInstances).forEach(c=>{try{c.destroy();}catch(e){}});
+  chartInstances={};
+
+  renderTabs();
+  document.getElementById('contenido').style.display='block';
+  // Mostrar primer agente
+  selectAgent(AGENTS[0].id);
+}
+
+function renderTabs(){
+  const tabs=document.getElementById('agentTabs');
+  tabs.innerHTML=AGENTS.map(ag=>`
+    <div class="atab" id="tab_${ag.id}" onclick="selectAgent('${ag.id}')">${ag.label}</div>
+  `).join('');
+}
+
+function selectAgent(agId){
+  document.querySelectorAll('.atab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab_'+agId).classList.add('active');
+  renderAgent(agId);
+}
+
+function renderAgent(agId){
+  const {ag, dias}=allData[agId];
+  const panel=document.getElementById('agentPanel');
+
+  if(Object.keys(dias).length===0){
+    panel.innerHTML=`<div class="empty">Sin datos para ${ag.label} en este período.</div>`;
+    return;
+  }
+
+  // ── CALCULAR TOTALES GENERALES ──────────────────────────────────────────
+  let totalDep=0,totalRet=0;
+  const tiposTotIn={}, tiposTotOut={};
+  TIPOS_IN.forEach(t=>{tiposTotIn[t.key]=0;});
+  TIPOS_OUT.forEach(t=>{tiposTotOut[t.key]=0;});
+
+  // Por turno
+  const porTurno={};
+  TURNOS.forEach(t=>{porTurno[t]={dep:0,ret:0,dias:0};});
+
+  // Por semana
+  const porSemana={};
+
+  for(const [dk,dayObj] of Object.entries(dias)){
+    const wk=getWeekKey(dk);
+    if(!porSemana[wk]){porSemana[wk]={dep:0,ret:0,dias:0,desde:dk,hasta:dk};}
+    let diaActivo=false;
+
+    for(const turno of TURNOS){
+      const raw=dayObj[turno]||{};
+      const dep=TIPOS_IN.reduce((s,t)=>s+numVal(raw[t.key]),0);
+      const ret=TIPOS_OUT.reduce((s,t)=>s+numVal(raw[t.key]),0);
+      if(dep||ret){
+        totalDep+=dep; totalRet+=ret;
+        porTurno[turno].dep+=dep; porTurno[turno].ret+=ret; porTurno[turno].dias++;
+        porSemana[wk].dep+=dep; porSemana[wk].ret+=ret;
+        TIPOS_IN.forEach(t=>{tiposTotIn[t.key]+=numVal(raw[t.key]);});
+        TIPOS_OUT.forEach(t=>{tiposTotOut[t.key]+=numVal(raw[t.key]);});
+        diaActivo=true;
+        if(dk<porSemana[wk].desde)porSemana[wk].desde=dk;
+        if(dk>porSemana[wk].hasta)porSemana[wk].hasta=dk;
+      }
+    }
+    if(diaActivo)porSemana[wk].dias++;
+  }
+
+  const neto=totalDep-totalRet;
+  const netoColor=neto>=0?'var(--green)':'var(--red)';
+  const diasActivos=Object.keys(dias).length;
+
+  // ── RENDER HTML ─────────────────────────────────────────────────────────
+  panel.innerHTML=`
+    <!-- RESUMEN -->
+    <div class="section-title">Resumen — ${ag.label}</div>
+    <div class="top-grid">
+      <div class="stat-card"><div class="label">Depósitos totales</div><div class="value">${fmt(totalDep)}</div><div class="sub">${diasActivos} días con actividad</div></div>
+      <div class="stat-card"><div class="label">Retiros totales</div><div class="value" style="color:var(--red)">${fmt(totalRet)}</div></div>
+      <div class="stat-card"><div class="label">Neto</div><div class="value" style="color:${netoColor}">${fmt(neto)}</div></div>
+      <div class="stat-card"><div class="label">Promedio/día</div><div class="value" style="color:${netoColor};font-size:1rem">${fmt(diasActivos>0?neto/diasActivos:0)}</div></div>
+    </div>
+
+    <!-- POR TIPO ENTRADA -->
+    <div class="section-title">Por tipo de entrada (depósitos)</div>
+    <div class="tipo-grid" id="tipoIn_${agId}"></div>
+
+    <!-- POR TIPO SALIDA -->
+    <div class="section-title">Por tipo de salida (retiros)</div>
+    <div class="tipo-grid" id="tipoOut_${agId}"></div>
+
+    <!-- CHARTS -->
+    <div class="charts-row">
+      <div class="chart-box">
+        <div class="section-title" style="margin-top:0">Composición depósitos</div>
+        <canvas id="chartIn_${agId}"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="section-title" style="margin-top:0">Composición retiros</div>
+        <canvas id="chartOut_${agId}"></canvas>
+      </div>
+    </div>
+
+    <!-- POR TURNO -->
+    <div class="section-title">Por turno</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Turno</th><th>Días activos</th><th>Depósitos</th><th>Retiros</th><th>Neto</th><th>Prom/día</th></tr></thead>
+        <tbody id="tblTurno_${agId}"></tbody>
+      </table>
+    </div>
+
+    <!-- POR SEMANA -->
+    <div class="section-title">Por semana</div>
+    <div class="table-wrap semana-table">
+      <table>
+        <thead><tr><th>Semana</th><th>Días</th><th>Depósitos</th><th>Retiros</th><th>Neto</th></tr></thead>
+        <tbody id="tblSemana_${agId}"></tbody>
+      </table>
+    </div>
+  `;
+
+  // Tipos IN
+  const maxIn=Math.max(...TIPOS_IN.map(t=>tiposTotIn[t.key]),1);
+  document.getElementById('tipoIn_'+agId).innerHTML=TIPOS_IN
+    .filter(t=>tiposTotIn[t.key]>0)
+    .sort((a,b)=>tiposTotIn[b.key]-tiposTotIn[a.key])
+    .map(t=>{
+      const pct=tiposTotIn[t.key]/totalDep*100||0;
+      return`<div class="tipo-card">
+        <div class="tname">${t.label}</div>
+        <div class="tval" style="color:var(--green)">${fmt(tiposTotIn[t.key])}</div>
+        <div class="tpct">${pct.toFixed(1)}% del total</div>
+        <div class="tbar"><div class="tbar-fill" style="width:${tiposTotIn[t.key]/maxIn*100}%;background:var(--green)"></div></div>
+      </div>`;
+    }).join('')||'<div style="color:var(--muted);font-size:0.8rem">Sin datos</div>';
+
+  // Tipos OUT
+  const maxOut=Math.max(...TIPOS_OUT.map(t=>tiposTotOut[t.key]),1);
+  document.getElementById('tipoOut_'+agId).innerHTML=TIPOS_OUT
+    .filter(t=>tiposTotOut[t.key]>0)
+    .sort((a,b)=>tiposTotOut[b.key]-tiposTotOut[a.key])
+    .map(t=>{
+      const pct=tiposTotOut[t.key]/totalRet*100||0;
+      return`<div class="tipo-card">
+        <div class="tname">${t.label}</div>
+        <div class="tval" style="color:var(--red)">${fmt(tiposTotOut[t.key])}</div>
+        <div class="tpct">${pct.toFixed(1)}% del total</div>
+        <div class="tbar"><div class="tbar-fill" style="width:${tiposTotOut[t.key]/maxOut*100}%;background:var(--red)"></div></div>
+      </div>`;
+    }).join('')||'<div style="color:var(--muted);font-size:0.8rem">Sin datos</div>';
+
+  // Tabla turnos
+  let tblTurno='';
+  let sumDep=0,sumRet=0,sumDias=0;
+  for(const t of TURNOS){
+    const d=porTurno[t];
+    if(!d.dep&&!d.ret)continue;
+    const n=d.dep-d.ret;
+    const nc=n>=0?'var(--green)':'var(--red)';
+    tblTurno+=`<tr><td>${TURNO_LABEL[t]}</td><td>${d.dias}</td><td>${fmt(d.dep)}</td><td>${fmt(d.ret)}</td><td style="color:${nc};font-weight:600">${fmt(n)}</td><td style="color:${nc}">${fmt(d.dias>0?n/d.dias:0)}</td></tr>`;
+    sumDep+=d.dep;sumRet+=d.ret;sumDias+=d.dias;
+  }
+  const sumN=sumDep-sumRet;
+  tblTurno+=`<tr class="subtotal"><td>TOTAL</td><td>${sumDias}</td><td>${fmt(sumDep)}</td><td>${fmt(sumRet)}</td><td style="color:${sumN>=0?'var(--green)':'var(--red)'}">${fmt(sumN)}</td><td>—</td></tr>`;
+  document.getElementById('tblTurno_'+agId).innerHTML=tblTurno;
+
+  // Tabla semanas
+  const semanasOrdenadas=Object.entries(porSemana).sort((a,b)=>a[0].localeCompare(b[0]));
+  document.getElementById('tblSemana_'+agId).innerHTML=semanasOrdenadas.map(([wk,s])=>{
+    const n=s.dep-s.ret;
+    const nc=n>=0?'var(--green)':'var(--red)';
+    const label=`${fmtF(new Date(s.desde))} – ${fmtF(new Date(s.hasta))}`;
+    return`<tr><td>${label}</td><td>${s.dias}</td><td>${fmt(s.dep)}</td><td>${fmt(s.ret)}</td><td style="color:${nc};font-weight:600">${fmt(n)}</td></tr>`;
+  }).join('');
+
+  // Charts
+  const COLORS_IN=['#4caf7d','#56c9b7','#7ec8e3','#a8d8a8','#c3f0ca','#e8f5e9'];
+  const COLORS_OUT=['#e05c5c','#e07c5c','#e0a05c','#c0392b','#e74c3c','#f39c12','#d35400','#c0392b','#e05c5c','#e07c5c','#f0a500'];
+
+  const inLabels=TIPOS_IN.filter(t=>tiposTotIn[t.key]>0).map(t=>t.label);
+  const inVals=TIPOS_IN.filter(t=>tiposTotIn[t.key]>0).map(t=>tiposTotIn[t.key]);
+  const outLabels=TIPOS_OUT.filter(t=>tiposTotOut[t.key]>0).map(t=>t.label);
+  const outVals=TIPOS_OUT.filter(t=>tiposTotOut[t.key]>0).map(t=>tiposTotOut[t.key]);
+
+  setTimeout(()=>{
+    if(chartInstances['in_'+agId])chartInstances['in_'+agId].destroy();
+    if(chartInstances['out_'+agId])chartInstances['out_'+agId].destroy();
+
+    chartInstances['in_'+agId]=new Chart(document.getElementById('chartIn_'+agId),{
+      type:'doughnut',
+      data:{labels:inLabels,datasets:[{data:inVals,backgroundColor:COLORS_IN,borderWidth:0}]},
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#888',font:{size:10}}},tooltip:{callbacks:{label:c=>` ${c.label}: ${fmt(c.raw)}`}}}}
+    });
+    chartInstances['out_'+agId]=new Chart(document.getElementById('chartOut_'+agId),{
+      type:'doughnut',
+      data:{labels:outLabels,datasets:[{data:outVals,backgroundColor:COLORS_OUT,borderWidth:0}]},
+      options:{responsive:true,plugins:{legend:{position:'bottom',labels:{color:'#888',font:{size:10}}},tooltip:{callbacks:{label:c=>` ${c.label}: ${fmt(c.raw)}`}}}}
+    });
+  },50);
+}
+
+window.addEventListener('load',cargarDatos);
+</script>
+</body>
+</html>
