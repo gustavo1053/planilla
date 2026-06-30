@@ -707,6 +707,39 @@ function saveManual(){
       buildMensual();
     }catch(e){}
   });
+  // Sincronizar sueldos y bonificaciones a Firebase para planilla de retiros
+  syncSueldosRetiros();
+}
+
+async function syncSueldosRetiros(){
+  try {
+    const dk = dateKey(currentDate);
+    // Recopilar sueldos y bonificaciones del día actual por agente
+    const dataPorAgente = {};
+    AGENTS.forEach(ag => {
+      const agData = {};
+      SHIFTS.forEach(sh => {
+        const turnoKey = sh.turnosKey; // manana, tarde, noche
+        agData[turnoKey] = {};
+        // Sueldo
+        const sueldo = S[ag.id]?.[sh.key]?.['sueldo']?.manual ?? '';
+        if (sueldo !== '') agData[turnoKey].sueldo = sueldo;
+        // Bonificaciones
+        const bonos = S[ag.id]?.[sh.key]?.['bonos']?.manual ?? '';
+        if (bonos !== '') agData[turnoKey].bonos = bonos;
+      });
+      dataPorAgente[ag.turnosKey] = agData;
+    });
+    // Guardar en Firebase colección retiros_sueldos
+    await setDoc(doc(db, 'retiros_sueldos', dk), {
+      fecha: dk,
+      agentes: dataPorAgente,
+      updated: new Date().toISOString()
+    });
+    console.log('Sueldos sincronizados a Firebase:', dk);
+  } catch(e) {
+    console.warn('Error sincronizando sueldos:', e);
+  }
 }
 
 
