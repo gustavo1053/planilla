@@ -3029,5 +3029,66 @@ function setBonifStatus(msg, type){
 
 
 </script>
+
+<script type="module">
+// ── SYNC SUELDOS/BONIF A FIREBASE ────────────────────────────
+import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const FB_CONFIG = {
+  apiKey: "AIzaSyCGRYyo9EmR0NB3TImzZIP4SuDpDwwMgVc",
+  projectId: "planilla-perdidas---ganancias"
+};
+
+let _db = null;
+function getDB() {
+  if (_db) return _db;
+  const apps = getApps();
+  const existing = apps.find(a => a.name === 'sync-retiros');
+  const app = existing || initializeApp(FB_CONFIG, 'sync-retiros');
+  _db = getFirestore(app);
+  return _db;
+}
+
+let syncTimer = null;
+async function syncSueldosFirebase() {
+  try {
+    const db = getDB();
+    const raw = JSON.parse(localStorage.getItem('turnosData') || '{}');
+    const porFecha = {};
+    Object.entries(raw).forEach(([agKey, fechas]) => {
+      Object.entries(fechas).forEach(([fecha, turnos]) => {
+        if (!porFecha[fecha]) porFecha[fecha] = { fecha, agentes: {}, updated: new Date().toISOString() };
+        porFecha[fecha].agentes[agKey] = {};
+        ['manana', 'tarde', 'noche'].forEach(t => {
+          const d = turnos[t] || {};
+          porFecha[fecha].agentes[agKey][t] = {};
+          if (d.sueldo) porFecha[fecha].agentes[agKey][t].sueldo = d.sueldo;
+          if (d.bonos)  porFecha[fecha].agentes[agKey][t].bonos  = d.bonos;
+        });
+      });
+    });
+    for (const [fecha, data] of Object.entries(porFecha)) {
+      await setDoc(doc(db, 'retiros_sueldos', fecha), data);
+    }
+    console.log('✓ Sueldos sincronizados a Firebase:', Object.keys(porFecha).length, 'fechas');
+  } catch(e) {
+    console.warn('Error sync sueldos:', e);
+  }
+}
+
+// Interceptar localStorage para detectar guardados
+const _origSet = localStorage.setItem.bind(localStorage);
+localStorage.setItem = function(key, val) {
+  _origSet(key, val);
+  if (key === 'turnosData') {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(syncSueldosFirebase, 1500);
+  }
+};
+
+// Sincronizar al cargar la página también
+window.addEventListener('load', () => setTimeout(syncSueldosFirebase, 3000));
+</script>
 </body>
 </html>
