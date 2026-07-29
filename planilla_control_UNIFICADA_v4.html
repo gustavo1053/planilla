@@ -2207,10 +2207,61 @@ initDate();
 buildTable();
 refreshFromTurnos();
 loadGanPerdFromFirebase(dateKey(currentDate));
+setTimeout(resyncSueldosMes, 3000);
 setInterval(refreshFromTurnos, 30000); // cada 30 segundos
+setInterval(resyncSueldosMes, 600000);
 updateFiltroLabels();
 
-// Expose functions needed by HTML buttons
+async function resyncSueldosMes(){
+  const btn = document.getElementById('btnResync'); // no existe ningún botón, esto queda inofensivo (null)
+  if(btn){ btn.disabled=true; btn.textContent='⏳ SINCRONIZANDO...'; }
+  try{
+    const existing = JSON.parse(localStorage.getItem('turnosData')||'{}');
+    const fechas = new Set();
+    AGENTS.forEach(ag=>{
+      const agData = existing[ag.turnosKey] || {};
+      Object.keys(agData).forEach(k=>{ if(/^\d{4}-\d{2}-\d{2}$/.test(k)) fechas.add(k); });
+    });
+    const fechasArr = Array.from(fechas).sort();
+    let ok=0, fail=0, vacios=0;
+    const CHUNK=15;
+    for(let i=0;i<fechasArr.length;i+=CHUNK){
+      const tanda = fechasArr.slice(i,i+CHUNK);
+      await Promise.all(tanda.map(async fecha=>{
+        try{
+          const dataPorAgente = {};
+          AGENTS.forEach(ag=>{
+            const agData = {};
+            SHIFTS.forEach(sh=>{
+              const raw = existing[ag.turnosKey]?.[fecha]?.[sh.turnosKey] || {};
+              const sue = numVal(raw.sueldo||0);
+              const bon = numVal(raw.bonos||0);
+              if(sue>0 || bon>0){
+                agData[sh.turnosKey] = {};
+                if(sue>0) agData[sh.turnosKey].sueldo = sue;
+                if(bon>0) agData[sh.turnosKey].bonos = bon;
+              }
+            });
+            if(Object.keys(agData).length>0) dataPorAgente[ag.turnosKey]=agData;
+          });
+          if(Object.keys(dataPorAgente).length===0){ vacios++; return; }
+          await setDoc(doc(db,'retiros_sueldos',fecha), {
+            fecha, agentes: dataPorAgente, updated: new Date().toISOString()
+          }, { merge:true });
+          ok++;
+        }catch(e){ fail++; console.warn('Resync error', fecha, e); }
+      }));
+    }
+    if(btn) btn.textContent = `✅ ${ok} días sincronizados` + (fail?` (${fail} err)`:'');
+    console.log(`Resync completo: ${ok} ok, ${fail} errores, ${vacios} sin datos de sueldo/bonos`);
+  }catch(e){
+    console.error('Error en resync mensual:', e);
+    if(btn) btn.textContent='❌ Error, ver consola';
+  }
+  setTimeout(()=>{ if(btn){ btn.disabled=false; btn.textContent='🔁 RESYNC SUELDOS'; } }, 5000);
+}
+window.resyncSueldosMes = resyncSueldosMes;
+ // Expose functions needed by HTML buttons
 window.changeDate=changeDate;
 window.exportPlanilla=exportPlanilla;
 window.exportResumen=exportResumen;
