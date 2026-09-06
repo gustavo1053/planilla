@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0049)https://planilla-liart.vercel.app/turnos_v10.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Control de Turnos</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<link href="./Control de Turnos_files/css2" rel="stylesheet">
+<script src="./Control de Turnos_files/xlsx.full.min.js.descarga"></script>
 
 <style>
   :root {
@@ -120,6 +120,10 @@
   .liq-select:focus{border-color:#80FFB0;}
   .liq-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:1px;padding:6px 14px;border-radius:4px;cursor:pointer;}
   .liq-btn:hover{border-color:#80FFB0;color:#80FFB0;}
+  .liq-mode-btns{display:flex;gap:3px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:3px;}
+  .liq-mode-btn{background:transparent;border:none;color:var(--text-dim);font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;padding:6px 14px;border-radius:4px;cursor:pointer;}
+  .liq-mode-btn:hover{color:#80FFB0;}
+  .liq-mode-btn.active{background:rgba(128,255,176,.15);color:#80FFB0;}
   .liq-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px;}
   .liq-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:8px 12px;}
   .liq-summary-lbl{font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:3px;}
@@ -835,9 +839,9 @@
 <header>
   <div class="logo">Control de Turnos</div>
   <div class="header-right">
-    <div class="header-date" id="headerDate"></div>
+    <div class="header-date" id="headerDate">DOMINGO 6 SEPTIEMBRE 2026</div>
     <button class="backup-btn" onclick="exportarDatos()" title="Guardar copia de seguridad">💾 Guardar Datos</button>
-    <button class="restore-btn" onclick="document.getElementById('importFile').click()" title="Cargar copia de seguridad">📂 Cargar Datos</button>
+    <button class="restore-btn" onclick="document.getElementById(&#39;importFile&#39;).click()" title="Cargar copia de seguridad">📂 Cargar Datos</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importarDatos(event)">
     <button class="download-btn" id="downloadBtn" onclick="downloadExcel()">
       <span class="dl-icon">⬇</span> Descargar Excel
@@ -847,10 +851,433 @@
 </header>
 
 <!-- AGENCY TABS -->
-<nav class="agency-nav" id="agencyNav"></nav>
+<nav class="agency-nav" id="agencyNav"><button class="ag-tab active">AG 18</button><button class="ag-tab">AG 19</button><button class="ag-tab">AG 21</button><button class="ag-tab">AG 22</button><button class="ag-tab">AG 23</button><button class="ag-tab">AG 24</button><button class="ag-tab">AG 25</button><button class="ag-tab mono-tab">SIEMPRE MONO</button><button class="ag-tab reporte-tab">REPORTE</button><button class="ag-tab obs-tab">OBS</button><button class="ag-tab liquid-tab">LIQUID.</button></nav>
 
 <!-- CONTENT PANELS -->
-<div id="contentPanels"></div>
+<div id="contentPanels"><div class="content active">
+    <div class="date-nav">
+      <button class="date-nav-btn" id="prevDay">◀</button>
+      <div class="date-label">DOMINGO 6 SEPTIEMBRE 2026</div>
+      <button class="date-nav-btn" id="nextDay">▶</button>
+    </div>
+    <div class="day-input-row" id="turnosRow"><div class="turno-card manana" id="card-AG_18-2026-09-06-manana"><div class="turno-header manana">
+    <div class="turno-title">TURNO MAÑANA</div>
+    <div class="turno-meta">
+      <div class="turno-operador">
+        <input type="text" placeholder="Operador" value="" data-field="operador">
+      </div>
+      <button class="turno-dl-btn" title="Descargar este turno en Excel">⬇ XLS</button>
+    </div>
+  </div><div class="time-row">
+    <div class="time-field">
+      <label>INICIO</label>
+      <input type="time" value="06:00" data-field="inicio">
+    </div>
+    <div class="time-field">
+      <label>FIN</label>
+      <input type="time" value="14:00" data-field="fin">
+    </div>
+  </div><div class="turno-body"><div><div class="col-label plus">FICHAS + (Entradas)</div><div class="field-row">
+        <span class="field-name">FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="fichas">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet1_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet1_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet2_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet2_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet3_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet3_monto">
+      </div><div class="field-row">
+        <span class="field-name">PAGO PENDIENTE</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="pago_pend">
+      </div><div class="field-row">
+        <span class="field-name">BAJA FICHAS T.N.</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="baja_fichas">
+      </div><div class="field-row">
+        <span class="field-name">TRANSF CH 18</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="transf">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="COLAB. RECIBIDAS" value="" data-field="colab_rec_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="colab_rec">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="CARGA DE FICHAS" value="" data-field="carga_fichas_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="carga_fichas">
+      </div></div><div><div class="col-label minus">BILLETERAS - (Salidas)</div><div class="field-row">
+        <span class="field-name">FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="fichas_out">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet1_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet1_out_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet2_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet2_out_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet3_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet3_out_monto">
+      </div><div class="field-row">
+        <span class="field-name">BONOS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="bonos">
+      </div><div class="field-row">
+        <span class="field-name">DESCARTES</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="descartes">
+      </div><div class="field-row">
+        <span class="field-name">COLAB. PAGADAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="colab_pag">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="PAGO OTROS TURNOS" value="" data-field="pago_otros_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="pago_otros">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="CARGA OTROS TURNOS" value="" data-field="carga_otros_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="carga_otros">
+      </div><div class="field-row">
+        <span class="field-name">RETIRO DE FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="retiro">
+      </div><div class="field-row">
+        <span class="field-name">SUELDO</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="sueldo">
+      </div><div class="field-row">
+        <span class="field-name">PROPINA</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="propina">
+      </div></div></div><div class="turno-footer" id="footer-AG_18-2026-09-06-manana">
+    <div class="total-box">
+      <label>TOTAL ENTRADAS</label>
+      <div class="total-val plus">-</div>
+    </div>
+    <div class="total-box">
+      <label>TOTAL SALIDAS</label>
+      <div class="total-val minus">-</div>
+    </div>
+    <div class="total-box">
+      <label>LIQUIDACIÓN</label>
+      <div class="total-val liq">+-</div>
+    </div>
+  </div><div class="turno-obs">
+    <div class="turno-obs-label">Observaciones</div>
+    <textarea class="obs-textarea" placeholder="Anotá cualquier novedad del turno..." data-field="obs"></textarea>
+  </div></div><div class="turno-card tarde" id="card-AG_18-2026-09-06-tarde"><div class="turno-header tarde">
+    <div class="turno-title">TURNO TARDE</div>
+    <div class="turno-meta">
+      <div class="turno-operador">
+        <input type="text" placeholder="Operador" value="" data-field="operador">
+      </div>
+      <button class="turno-dl-btn" title="Descargar este turno en Excel">⬇ XLS</button>
+    </div>
+  </div><div class="time-row">
+    <div class="time-field">
+      <label>INICIO</label>
+      <input type="time" value="14:00" data-field="inicio">
+    </div>
+    <div class="time-field">
+      <label>FIN</label>
+      <input type="time" value="22:00" data-field="fin">
+    </div>
+  </div><div class="turno-body"><div><div class="col-label plus">FICHAS + (Entradas)</div><div class="field-row">
+        <span class="field-name">FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="fichas">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet1_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet1_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet2_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet2_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet3_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet3_monto">
+      </div><div class="field-row">
+        <span class="field-name">PAGO PENDIENTE</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="pago_pend">
+      </div><div class="field-row">
+        <span class="field-name">BAJA FICHAS T.N.</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="baja_fichas">
+      </div><div class="field-row">
+        <span class="field-name">TRANSF CH 18</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="transf">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="COLAB. RECIBIDAS" value="" data-field="colab_rec_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="colab_rec">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="CARGA DE FICHAS" value="" data-field="carga_fichas_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="carga_fichas">
+      </div></div><div><div class="col-label minus">BILLETERAS - (Salidas)</div><div class="field-row">
+        <span class="field-name">FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="fichas_out">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet1_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet1_out_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet2_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet2_out_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet3_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet3_out_monto">
+      </div><div class="field-row">
+        <span class="field-name">BONOS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="bonos">
+      </div><div class="field-row">
+        <span class="field-name">DESCARTES</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="descartes">
+      </div><div class="field-row">
+        <span class="field-name">COLAB. PAGADAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="colab_pag">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="PAGO OTROS TURNOS" value="" data-field="pago_otros_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="pago_otros">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="CARGA OTROS TURNOS" value="" data-field="carga_otros_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="carga_otros">
+      </div><div class="field-row">
+        <span class="field-name">RETIRO DE FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="retiro">
+      </div><div class="field-row">
+        <span class="field-name">SUELDO</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="sueldo">
+      </div><div class="field-row">
+        <span class="field-name">PROPINA</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="propina">
+      </div></div></div><div class="turno-footer" id="footer-AG_18-2026-09-06-tarde">
+    <div class="total-box">
+      <label>TOTAL ENTRADAS</label>
+      <div class="total-val plus">-</div>
+    </div>
+    <div class="total-box">
+      <label>TOTAL SALIDAS</label>
+      <div class="total-val minus">-</div>
+    </div>
+    <div class="total-box">
+      <label>LIQUIDACIÓN</label>
+      <div class="total-val liq">+-</div>
+    </div>
+  </div><div class="turno-obs">
+    <div class="turno-obs-label">Observaciones</div>
+    <textarea class="obs-textarea" placeholder="Anotá cualquier novedad del turno..." data-field="obs"></textarea>
+  </div></div><div class="turno-card noche" id="card-AG_18-2026-09-06-noche"><div class="turno-header noche">
+    <div class="turno-title">TURNO NOCHE</div>
+    <div class="turno-meta">
+      <div class="turno-operador">
+        <input type="text" placeholder="Operador" value="" data-field="operador">
+      </div>
+      <button class="turno-dl-btn" title="Descargar este turno en Excel">⬇ XLS</button>
+    </div>
+  </div><div class="time-row">
+    <div class="time-field">
+      <label>INICIO</label>
+      <input type="time" value="22:00" data-field="inicio">
+    </div>
+    <div class="time-field">
+      <label>FIN</label>
+      <input type="time" value="06:00" data-field="fin">
+    </div>
+  </div><div class="turno-body"><div><div class="col-label plus">FICHAS + (Entradas)</div><div class="field-row">
+        <span class="field-name">FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="fichas">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet1_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet1_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet2_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet2_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet3_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet3_monto">
+      </div><div class="field-row">
+        <span class="field-name">PAGO PENDIENTE</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="pago_pend">
+      </div><div class="field-row">
+        <span class="field-name">BAJA FICHAS T.N.</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="baja_fichas">
+      </div><div class="field-row">
+        <span class="field-name">TRANSF CH 18</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="transf">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="COLAB. RECIBIDAS" value="" data-field="colab_rec_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="colab_rec">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="CARGA DE FICHAS" value="" data-field="carga_fichas_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="carga_fichas">
+      </div></div><div><div class="col-label minus">BILLETERAS - (Salidas)</div><div class="field-row">
+        <span class="field-name">FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="fichas_out">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet1_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet1_out_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet2_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet2_out_monto">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <select class="liq-select wallet-select" data-field="wallet3_out_monto_label" style="font-size:11px;padding:3px 6px;min-width:130px;">
+            <option value="" selected="">— BILLETERA —</option><option value="Personal Pay">Personal Pay</option><option value="Claro Pay">Claro Pay</option><option value="AstroPay">AstroPay</option><option value="Prex">Prex</option><option value="Naranja X">Naranja X</option><option value="Lemon">Lemon</option><option value="Mercado Pago">Mercado Pago</option><option value="Ualá">Ualá</option><option value="ARQ">ARQ</option>
+          </select>
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="wallet3_out_monto">
+      </div><div class="field-row">
+        <span class="field-name">BONOS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="bonos">
+      </div><div class="field-row">
+        <span class="field-name">DESCARTES</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="descartes">
+      </div><div class="field-row">
+        <span class="field-name">COLAB. PAGADAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="colab_pag">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="PAGO OTROS TURNOS" value="" data-field="pago_otros_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="pago_otros">
+      </div><div class="field-row">
+        <div class="field-name-wrap">
+          <span class="editable-badge">✏ nombre</span>
+          <input class="label-input" type="text" placeholder="CARGA OTROS TURNOS" value="" data-field="carga_otros_label">
+        </div>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="carga_otros">
+      </div><div class="field-row">
+        <span class="field-name">RETIRO DE FICHAS</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="retiro">
+      </div><div class="field-row">
+        <span class="field-name">SUELDO</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="sueldo">
+      </div><div class="field-row">
+        <span class="field-name">PROPINA</span>
+        <input class="field-input" type="text" inputmode="numeric" placeholder="0" value="" data-field="propina">
+      </div></div></div><div class="turno-footer" id="footer-AG_18-2026-09-06-noche">
+    <div class="total-box">
+      <label>TOTAL ENTRADAS</label>
+      <div class="total-val plus">-</div>
+    </div>
+    <div class="total-box">
+      <label>TOTAL SALIDAS</label>
+      <div class="total-val minus">-</div>
+    </div>
+    <div class="total-box">
+      <label>LIQUIDACIÓN</label>
+      <div class="total-val liq">+-</div>
+    </div>
+  </div><div class="turno-obs">
+    <div class="turno-obs-label">Observaciones</div>
+    <textarea class="obs-textarea" placeholder="Anotá cualquier novedad del turno..." data-field="obs"></textarea>
+  </div></div></div>
+    <div class="day-summary" id="daySummary">
+    <div class="summary-item">
+      <label>TOTAL DÍA — ENTRADAS</label>
+      <div class="summary-val positive">-</div>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <label>TOTAL DÍA — SALIDAS</label>
+      <div class="summary-val negative">-</div>
+    </div>
+    <div class="summary-divider"></div>
+    <div class="summary-item">
+      <label>LIQUIDACIÓN TOTAL DÍA</label>
+      <div class="summary-val positive">+-</div>
+    </div>
+    <div class="summary-item">
+      <label>TURNOS CARGADOS</label>
+      <div class="summary-val neutral">0 / 3</div>
+    </div>
+  </div>
+  </div></div>
 
 <!-- TOAST -->
 <div class="save-toast" id="saveToast">✓ Guardado</div>
@@ -925,8 +1352,8 @@ const FIELDS_IN = [
   { id:'wallet2_monto', label:'BILLETERA', walletLabel: true },
   { id:'wallet3_monto', label:'BILLETERA', walletLabel: true },
   { id:'pago_pend',    label:'PAGO PENDIENTE' },
-  { id:'baja_fichas',  label:'BAJA FICHAS T.N.' },
-  { id:'transf',       label:'TRANSF CH 18' },
+  { id:'baja_fichas',  label:'BAJA FICHAS T.N.', editableLabel: true },
+  { id:'transf',       label:'TRANSF CH 18', editableLabel: true },
   { id:'colab_rec',    label:'COLAB. RECIBIDAS', editableLabel: true },
   { id:'carga_fichas', label:'CARGA DE FICHAS',  editableLabel: true },
 ];
@@ -1046,10 +1473,12 @@ function liqLabelPlain(liq) {
 // ── PLANILLA LIQUIDACIONES ─────────────────────────────────────────
 let liqDate = new Date(); liqDate.setHours(12,0,0,0);
 let liqData = {};
+let liqViewMode = 'dia'; // 'dia' | 'mes'
 
 const LIQ_TURNO_LABEL = { manana:'MAÑANA', tarde:'TARDE', noche:'NOCHE' };
 const LIQ_TURNO_CLS   = { manana:'manana', tarde:'tarde', noche:'noche' };
 const LIQ_DIAS = ['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'];
+const LIQ_MESES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'];
 const VERIF_LIQ_THRESHOLD = 3000;
 
 function liqDocKey(ag,dk,turno){ return `${ag.replace(/ /g,'_')}__${dk}__${turno}`; }
@@ -1059,6 +1488,35 @@ async function loadLiqData(dk){
     const snap=await getDocs(query(collection(_db,'conciliaciones'),where('fecha','==',dk)));
     snap.forEach(d=>{ liqData[d.id]=d.data(); });
   }catch(e){ console.warn('loadLiqData',e); }
+}
+
+async function loadLiqDataMonth(startKey,endKey){
+  try{
+    const snap=await getDocs(query(collection(_db,'conciliaciones'),where('fecha','>=',startKey),where('fecha','<=',endKey)));
+    snap.forEach(d=>{ liqData[d.id]=d.data(); });
+  }catch(e){ console.warn('loadLiqDataMonth',e); }
+}
+
+function getMonthRangeKeys(d){
+  const y=d.getFullYear(), m=d.getMonth();
+  const start=`${y}-${String(m+1).padStart(2,'0')}-01`;
+  const lastDay=new Date(y,m+1,0).getDate();
+  const end=`${y}-${String(m+1).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
+  return {start,end};
+}
+
+function getDaysInMonth(d){
+  const y=d.getFullYear(), m=d.getMonth();
+  const lastDay=new Date(y,m+1,0).getDate();
+  const arr=[];
+  for(let i=1;i<=lastDay;i++) arr.push(new Date(y,m,i,12));
+  return arr;
+}
+
+function liqSetMode(mode){
+  if(liqViewMode===mode)return;
+  liqViewMode=mode;
+  renderLiquidaciones();
 }
 
 async function saveLiqEntry(docKey,data){
@@ -1071,12 +1529,22 @@ function renderLiquidaciones(){
   panels.innerHTML='';
   const dk=dateKey(liqDate);
   const dayLabel=`${LIQ_DIAS[liqDate.getDay()]} ${String(liqDate.getDate()).padStart(2,'0')}/${String(liqDate.getMonth()+1).padStart(2,'0')}/${liqDate.getFullYear()}`;
+  const monthLabel=`${LIQ_MESES[liqDate.getMonth()]} ${liqDate.getFullYear()}`;
+  const navLabel = liqViewMode==='mes' ? monthLabel : dayLabel;
+  const theadCols = liqViewMode==='mes'
+    ? `<th>AGENTE</th><th>FECHA</th><th>TURNO</th><th>OPERADOR</th><th>DIFERENCIA</th><th>TIPO</th><th>CAUSAL</th><th>FECHA CONCILIACIÓN</th><th>OBSERVACIONES</th><th>ESTADO</th>`
+    : `<th>AGENTE</th><th>TURNO</th><th>OPERADOR</th><th>DIFERENCIA</th><th>TIPO</th><th>CAUSAL</th><th>FECHA CONCILIACIÓN</th><th>OBSERVACIONES</th><th>ESTADO</th>`;
+  const colCount = liqViewMode==='mes' ? 10 : 9;
   const wrap=document.createElement('div'); wrap.className='liq-wrap';
   wrap.innerHTML=`
     <div class="liq-topbar">
+      <div class="liq-mode-btns">
+        <button class="liq-mode-btn ${liqViewMode==='dia'?'active':''}" onclick="liqSetMode('dia')">DÍA</button>
+        <button class="liq-mode-btn ${liqViewMode==='mes'?'active':''}" onclick="liqSetMode('mes')">MES</button>
+      </div>
       <div class="liq-nav">
         <button class="liq-nav-btn" onclick="liqChangeDate(-1)">◀</button>
-        <span class="liq-date-display" id="liqDateTxt" onclick="document.getElementById('liqDatePicker').style.display='block';document.getElementById('liqDateTxt').style.display='none';document.getElementById('liqDatePicker').focus();">${dayLabel}</span>
+        <span class="liq-date-display" id="liqDateTxt" onclick="document.getElementById('liqDatePicker').style.display='block';document.getElementById('liqDateTxt').style.display='none';document.getElementById('liqDatePicker').focus();">${navLabel}</span>
         <input type="date" class="liq-date-input" id="liqDatePicker" value="${dk}" onchange="liqPickDate(this.value)" onblur="document.getElementById('liqDatePicker').style.display='none';document.getElementById('liqDateTxt').style.display='inline'"/>
         <button class="liq-nav-btn" onclick="liqChangeDate(1)">▶</button>
       </div>
@@ -1090,20 +1558,23 @@ function renderLiquidaciones(){
     </div>
     <div class="liq-summary" id="liqSummary"></div>
     <table class="liq-table">
-      <thead><tr>
-        <th>AGENTE</th><th>TURNO</th><th>OPERADOR</th><th>DIFERENCIA</th><th>TIPO</th>
-        <th>CAUSAL</th><th>FECHA CONCILIACIÓN</th><th>OBSERVACIONES</th><th>ESTADO</th>
-      </tr></thead>
-      <tbody id="liqTbody"><tr><td colspan="9" class="liq-empty">Cargando...</td></tr></tbody>
+      <thead><tr>${theadCols}</tr></thead>
+      <tbody id="liqTbody"><tr><td colspan="${colCount}" class="liq-empty">Cargando...</td></tr></tbody>
     </table>`;
   panels.appendChild(wrap);
   ['liqFiltAg','liqFiltTurno','liqFiltEstado'].forEach(id=>{
     document.getElementById(id).addEventListener('change',buildLiqTable);
   });
-  loadLiqData(dk).then(()=>buildLiqTable());
+  if(liqViewMode==='mes'){
+    const {start,end}=getMonthRangeKeys(liqDate);
+    loadLiqDataMonth(start,end).then(()=>buildLiqTable());
+  } else {
+    loadLiqData(dk).then(()=>buildLiqTable());
+  }
 }
 
 function buildLiqTable(){
+  if(liqViewMode==='mes'){ buildLiqTableMes(); return; }
   const dk=dateKey(liqDate);
   const agFilt=document.getElementById('liqFiltAg')?.value||'';
   const turnoFilt=document.getElementById('liqFiltTurno')?.value||'';
@@ -1161,6 +1632,70 @@ function buildLiqTable(){
   }).join('');
 }
 
+function buildLiqTableMes(){
+  const agFilt=document.getElementById('liqFiltAg')?.value||'';
+  const turnoFilt=document.getElementById('liqFiltTurno')?.value||'';
+  const estadoFilt=document.getElementById('liqFiltEstado')?.value||'';
+  const tbody=document.getElementById('liqTbody');
+  if(!tbody)return;
+  const days=getDaysInMonth(liqDate);
+  const agList = agFilt ? [agFilt] : AGENCIES;
+  const rows=[];
+  let totalFaltantes=0,totalSobrantes=0,totalPendientes=0;
+  days.forEach(dayObj=>{
+    const dk=dateKey(dayObj);
+    agList.forEach(ag=>{
+      TURNOS.forEach(t=>{
+        if(turnoFilt&&t.key!==turnoFilt)return;
+        const turnoData=appData[ag]?.[dk]?.[t.key];
+        if(!turnoData)return;
+        const verif=calcVerifLocal(turnoData);
+        if(Math.abs(verif)<=VERIF_LIQ_THRESHOLD)return;
+        const op=turnoData.operador?.trim()||'';
+        const docKey=liqDocKey(ag,dk,t.key);
+        const saved=liqData[docKey]||{};
+        const conciliado=!!saved.conciliado;
+        if(estadoFilt==='pendiente'&&conciliado)return;
+        if(estadoFilt==='conciliado'&&!conciliado)return;
+        if(verif>0)totalSobrantes+=verif; else totalFaltantes+=verif;
+        if(!conciliado)totalPendientes++;
+        rows.push({ag,dk,turnoKey:t.key,op,verif,docKey,saved,conciliado});
+      });
+    });
+  });
+  const sumEl=document.getElementById('liqSummary');
+  if(sumEl){sumEl.innerHTML=`
+    <div class="liq-summary-card"><div class="liq-summary-lbl">DIFERENCIAS</div><div class="liq-summary-val warn">${rows.length}</div></div>
+    <div class="liq-summary-card"><div class="liq-summary-lbl">FALTANTES (+)</div><div class="liq-summary-val neg">${Math.round(totalSobrantes).toLocaleString('es-AR')}</div></div>
+    <div class="liq-summary-card"><div class="liq-summary-lbl">SOBRANTES (−)</div><div class="liq-summary-val pos">${Math.round(Math.abs(totalFaltantes)).toLocaleString('es-AR')}</div></div>
+    <div class="liq-summary-card"><div class="liq-summary-lbl">PENDIENTES</div><div class="liq-summary-val warn">${totalPendientes}</div></div>`;}
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="10" class="liq-empty">SIN DIFERENCIAS MAYORES A 3.000 EN ESTE MES</td></tr>`;return;}
+  tbody.innerHTML=rows.map(r=>{
+    const isFaltante=r.verif>0;
+    const sign=r.verif>0?'+':'';
+    const montoFmt=sign+Math.round(r.verif).toLocaleString('es-AR');
+    const tipo=isFaltante?'FALTANTE':'SOBRANTE';
+    const turnoCls=LIQ_TURNO_CLS[r.turnoKey]||'';
+    const turnoLbl=LIQ_TURNO_LABEL[r.turnoKey]||r.turnoKey;
+    const statusCls=r.conciliado?'conciliado':'pendiente';
+    const statusTxt=r.conciliado?'✓ CONCILIADO':'● PENDIENTE';
+    const [yy,mm,dd]=r.dk.split('-');
+    const fechaFmt=`${dd}/${mm}`;
+    return `<tr class="${r.conciliado?'conciliado':''}">
+      <td style="font-weight:700;color:var(--text-bright)">${r.ag}</td>
+      <td style="color:#80FFB0;font-family:'Share Tech Mono',monospace;font-size:11px">${fechaFmt}</td>
+      <td><span class="liq-turno-badge ${turnoCls}">${turnoLbl}</span></td>
+      <td style="color:var(--text-dim);font-size:11px">${r.op||'—'}</td>
+      <td><span class="liq-monto ${isFaltante?'faltante':'sobrante'}">${montoFmt}</span></td>
+      <td style="font-size:10px;font-weight:700;color:${isFaltante?'#ff4757':'#80FFB0'}">${tipo}</td>
+      <td><input class="liq-input" placeholder="Causal…" value="${(r.saved.causal||'').replace(/"/g,'&quot;')}" onchange="liqSaveField('${r.docKey}','${r.dk}','causal',this.value)"/></td>
+      <td><input type="date" class="liq-input date-inp" value="${r.saved.fechaConciliacion||''}" onchange="liqSaveField('${r.docKey}','${r.dk}','fechaConciliacion',this.value)"/></td>
+      <td><input class="liq-input" placeholder="Observaciones…" value="${(r.saved.obs||'').replace(/"/g,'&quot;')}" onchange="liqSaveField('${r.docKey}','${r.dk}','obs',this.value)"/></td>
+      <td><span class="liq-status ${statusCls}" style="cursor:pointer" onclick="liqToggleConciliado('${r.docKey}','${r.dk}',${r.conciliado})" title="Click para cambiar">${statusTxt}</span></td>
+    </tr>`;
+  }).join('');
+}
+
 async function liqSaveField(docKey,fecha,field,value){
   if(!liqData[docKey])liqData[docKey]={fecha};
   liqData[docKey][field]=value; liqData[docKey].fecha=fecha;
@@ -1179,9 +1714,17 @@ async function liqToggleConciliado(docKey,fecha,current){
 }
 
 function setSavingMsg(msg){const el=document.getElementById('liqSavingMsg');if(el)el.textContent=msg;}
-function liqChangeDate(delta){liqDate=new Date(liqDate.getTime()+delta*86400000);liqDate.setHours(12,0,0,0);renderLiquidaciones();}
+function liqChangeDate(delta){
+  if(liqViewMode==='mes'){
+    liqDate=new Date(liqDate.getFullYear(),liqDate.getMonth()+delta,1,12);
+  } else {
+    liqDate=new Date(liqDate.getTime()+delta*86400000);
+  }
+  liqDate.setHours(12,0,0,0);
+  renderLiquidaciones();
+}
 function liqPickDate(val){const[y,m,d]=val.split('-');liqDate=new Date(+y,+m-1,+d,12);document.getElementById('liqDatePicker').style.display='none';document.getElementById('liqDateTxt').style.display='inline';renderLiquidaciones();}
-window.liqChangeDate=liqChangeDate; window.liqPickDate=liqPickDate;
+window.liqChangeDate=liqChangeDate; window.liqPickDate=liqPickDate; window.liqSetMode=liqSetMode;
 window.liqSaveField=liqSaveField; window.liqToggleConciliado=liqToggleConciliado;
 window._dbg=()=>({appData,liqData});
 
@@ -2610,5 +3153,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
-</body>
-</html>
+
+
+</body></html>
