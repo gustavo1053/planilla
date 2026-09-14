@@ -358,35 +358,6 @@
   .comp-total-neto-neg{color:#FF8080 !important;font-weight:900;text-align:right;font-size:15px;}
   .comp-neto-final td{background:#0a1e0a;border:1px solid #040e04;}
   .comp-divider{background:#0d3a0d !important;border-left:3px solid #FFD600 !important;border-right:3px solid #FFD600 !important;}
-
-  /* ── ASISTENTE IA ── */
-  .ia-chat-toggle{position:fixed;bottom:22px;right:22px;width:52px;height:52px;border-radius:50%;
-    background:linear-gradient(135deg,#1A3A6B 0%,#2E5FA3 100%);color:#fff;border:none;
-    font-size:22px;cursor:pointer;box-shadow:0 4px 14px rgba(20,40,80,.4);z-index:9998;
-    display:flex;align-items:center;justify-content:center;transition:transform .15s;}
-  .ia-chat-toggle:hover{transform:scale(1.07);}
-  .ia-chat-panel{position:fixed;bottom:86px;right:22px;width:340px;max-width:calc(100vw - 32px);
-    height:460px;max-height:calc(100vh - 120px);background:#fff;border:1px solid #b0c4e0;
-    border-radius:10px;box-shadow:0 8px 28px rgba(20,40,80,.3);z-index:9999;
-    display:none;flex-direction:column;overflow:hidden;font-family:Calibri,Arial,sans-serif;}
-  .ia-chat-panel.open{display:flex;}
-  .ia-chat-header{background:linear-gradient(135deg,#1A3A6B 0%,#2E5FA3 100%);color:#fff;
-    font-weight:700;font-size:13px;letter-spacing:1px;padding:10px 14px;
-    display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-  .ia-chat-close{background:none;border:none;color:#fff;font-size:15px;cursor:pointer;opacity:.85;}
-  .ia-chat-close:hover{opacity:1;}
-  .ia-chat-body{flex:1;overflow-y:auto;padding:10px;background:#f4f7fb;display:flex;flex-direction:column;gap:8px;}
-  .ia-msg{max-width:85%;padding:8px 11px;border-radius:9px;font-size:12.5px;line-height:1.4;white-space:pre-wrap;}
-  .ia-msg-bot{align-self:flex-start;background:#fff;border:1px solid #c8d6ea;color:#1a1a2e;}
-  .ia-msg-user{align-self:flex-end;background:#2E5FA3;color:#fff;}
-  .ia-msg-error{align-self:flex-start;background:#fdeaea;border:1px solid #f0b0b0;color:#a02020;}
-  .ia-chat-inputrow{display:flex;gap:6px;padding:9px;border-top:1px solid #dbe4f0;background:#fff;flex-shrink:0;}
-  .ia-chat-inputrow input{flex:1;border:1px solid #c0d0e8;border-radius:5px;padding:7px 9px;font-size:12.5px;outline:none;}
-  .ia-chat-inputrow input:focus{border-color:#2E5FA3;}
-  .ia-chat-inputrow button{background:#1A3A6B;color:#fff;border:none;border-radius:5px;
-    width:34px;font-size:14px;cursor:pointer;flex-shrink:0;}
-  .ia-chat-inputrow button:hover{background:#2E5FA3;}
-  .ia-chat-inputrow button:disabled{opacity:.5;cursor:default;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -683,22 +654,6 @@
   <span><span class="ldot" style="background:#EBF3FF;border:1px solid #c0d0e8;"></span>
     <strong>GANANCIA / PÉRDIDA</strong> — ingreso manual</span>
   <span style="color:#9a6b00;font-size:9px;">⚡ Datos AGE 18-24 en 'planillaControlV4_otros' · Datos AGE 25/SM en 'planillaControlV4' — ningún dato existente se pierde</span>
-</div>
-
-<!-- ── ASISTENTE IA ── -->
-<button id="iaChatToggle" class="ia-chat-toggle" title="Asistente" onclick="toggleIAChat()">💬</button>
-<div id="iaChatPanel" class="ia-chat-panel">
-  <div class="ia-chat-header">
-    <span>🤖 ASISTENTE</span>
-    <button class="ia-chat-close" onclick="toggleIAChat()">✕</button>
-  </div>
-  <div id="iaChatBody" class="ia-chat-body">
-    <div class="ia-msg ia-msg-bot">Hola 👋 Preguntame sobre los datos del día visible en la planilla (ganancias, pérdidas, descartes, por agente, etc.).</div>
-  </div>
-  <div class="ia-chat-inputrow">
-    <input id="iaChatInput" type="text" placeholder="Escribí tu pregunta..." autocomplete="off">
-    <button id="iaChatSend" onclick="enviarIAChat()">➤</button>
-  </div>
 </div>
 
 <script type="module">
@@ -1328,95 +1283,6 @@ function updateResumen(){
   AGENTS.forEach(ag=>{ SHIFTS.forEach(sh=>{ grandDesc+=getVal(ag.id,sh.key,'desc'); }); });
   const eDF=document.getElementById('res_desc_final'); if(eDF){ eDF.textContent=grandDesc!==0?fmtN(Math.abs(grandDesc)):'—'; }
 }
-
-// ═══════════════════════════════════════════════
-//  CONTEXTO PARA ASISTENTE IA
-// ═══════════════════════════════════════════════
-// Recorre un rango de fechas UNA sola vez, leyendo localStorage/turnosData,
-// y devuelve tanto el acumulado por agencia como el detalle día por día
-// (todas las agencias sumadas). Misma lógica que calcRango, pero en un solo pase.
-function buildResumenRangoIA(desde, hasta){
-  const cache={};
-  STORE_KEYS.forEach(sk=>{ cache[sk]=getAllManual(sk); });
-  const turnosCache=getTurnosData();
-  const agTotals={};
-  AGENTS.forEach(ag=>{ agTotals[ag.id]={gan:0,perd:0,desc:0,sueldo:0}; });
-  const porDia=[];
-  let cur=new Date(desde); cur.setHours(0,0,0,0);
-  const fin=new Date(hasta); fin.setHours(0,0,0,0);
-  while(cur<=fin){
-    const dk=dateKey2(cur);
-    let dGan=0, dPerd=0, dDesc=0;
-    AGENTS.forEach(ag=>{
-      const dayData=cache[ag.storeKey][dk];
-      const agDay=dayData?.[ag.id];
-      SHIFTS.forEach(sh=>{
-        const shDay=agDay?.[sh.key]||{};
-        const g=pn(shDay.gan||0), p=pn(shDay.perd||0);
-        let d=pn(shDay.desc||0);
-        if(!d){
-          const rawTurnos=turnosCache[ag.turnosKey]?.[dk]?.[sh.turnosKey]||{};
-          d=numVal(rawTurnos.descartes||0);
-        }
-        const tieneDatos = g!==0 || p!==0 || d!==0 || pn(shDay.carga||0)!==0 || pn(shDay.retiro||0)!==0;
-        const sue = tieneDatos ? 35000 : 0;
-        agTotals[ag.id].gan+=g; agTotals[ag.id].perd+=p; agTotals[ag.id].desc+=d; agTotals[ag.id].sueldo+=sue;
-        dGan+=g; dPerd+=p; dDesc+=d;
-      });
-    });
-    if(dGan||dPerd||dDesc) porDia.push({ fecha:fmtFecha(cur), gan:dGan, perd:dPerd, desc:dDesc });
-    cur=addDias(cur,1);
-  }
-  return { agTotals, porDia };
-}
-
-function buildContextoIA(){
-  const f=n=>Math.round(n).toLocaleString('es-AR');
-  const fecha=document.getElementById('fecha')?.value||dateKey(currentDate);
-
-  // ── Día visible en pantalla, detalle por agencia ──
-  let granGan=0, granPerd=0, granDesc=0, granRetiro=0, granCarga=0, granSueldo=0;
-  const lineasDia=AGENTS.map(ag=>{
-    let gan=0, perd=0, desc=0, retiro=0, carga=0, sueldo=0;
-    SHIFTS.forEach(sh=>{
-      gan+=getVal(ag.id,sh.key,'gan'); perd+=getVal(ag.id,sh.key,'perd');
-      desc+=getVal(ag.id,sh.key,'desc'); retiro+=getVal(ag.id,sh.key,'retiro');
-      carga+=getVal(ag.id,sh.key,'carga'); sueldo+=getVal(ag.id,sh.key,'sueldo');
-    });
-    granGan+=gan; granPerd+=perd; granDesc+=desc; granRetiro+=retiro; granCarga+=carga; granSueldo+=sueldo;
-    const neto=gan-perd;
-    return `- ${ag.label}: ganancia ${f(gan)}, pérdida ${f(perd)}, neto ${neto>=0?'+':''}${f(neto)}, descartes ${f(desc)}, retiros ${f(retiro)}, cargas ${f(carga)}, sueldo ${f(sueldo)}`;
-  });
-  const netoGrandDia=granGan-granPerd;
-
-  // ── Mes completo de la fecha visible: acumulado por agencia + detalle día por día ──
-  const inicioMes=primerDiaMes(currentDate), finMes=ultimoDiaMes(currentDate);
-  const mesLbl=`${MESES_ES[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-  const { agTotals, porDia } = buildResumenRangoIA(inicioMes, finMes);
-
-  const lineasMes=AGENTS.map(ag=>{
-    const t=agTotals[ag.id]; const n=t.gan-t.perd;
-    return `- ${ag.label}: ganancia ${f(t.gan)}, pérdida ${f(t.perd)}, neto ${n>=0?'+':''}${f(n)}, descartes ${f(t.desc)}, sueldo ${f(t.sueldo)}`;
-  });
-  let granGanMes=0, granPerdMes=0, granDescMes=0;
-  AGENTS.forEach(ag=>{ granGanMes+=agTotals[ag.id].gan; granPerdMes+=agTotals[ag.id].perd; granDescMes+=agTotals[ag.id].desc; });
-  const netoMes=granGanMes-granPerdMes;
-
-  const lineasPorDia=porDia.map(d=>{
-    const n=d.gan-d.perd;
-    return `  ${d.fecha}: ganancia ${f(d.gan)}, pérdida ${f(d.perd)}, neto ${n>=0?'+':''}${f(n)}, descartes ${f(d.desc)}`;
-  });
-
-  return `Fecha visible en la planilla: ${fecha}\n\n`+
-    `── DÍA VISIBLE (suma de turnos TM+TT+TN) ──\n${lineasDia.join('\n')}\n\n`+
-    `TOTAL DEL DÍA VISIBLE: ganancia ${f(granGan)}, pérdida ${f(granPerd)}, neto ${netoGrandDia>=0?'+':''}${f(netoGrandDia)}, `+
-    `descartes ${f(granDesc)}, retiros ${f(granRetiro)}, cargas de fichas ${f(granCarga)}, sueldos ${f(granSueldo)}.\n\n`+
-    `── ACUMULADO DE ${mesLbl.toUpperCase()} POR AGENCIA (todo el mes) ──\n${lineasMes.join('\n')}\n\n`+
-    `TOTAL DEL MES: ganancia ${f(granGanMes)}, pérdida ${f(granPerdMes)}, neto ${netoMes>=0?'+':''}${f(netoMes)}, descartes ${f(granDescMes)}.\n\n`+
-    `── DETALLE DÍA POR DÍA DE ${mesLbl.toUpperCase()} (todas las agencias sumadas) ──\n${lineasPorDia.length?lineasPorDia.join('\n'):'  Sin datos cargados en este mes.'}\n\n`+
-    `(Si te preguntan por un mes distinto al visible, avisá que solo tenés cargado ${mesLbl}.)`;
-}
-window.getContextoIA = buildContextoIA;
 
 // ═══════════════════════════════════════════════
 //  DATE
@@ -3347,82 +3213,6 @@ function setBonifStatus(msg, type){
 
 
 
-</script>
-
-<script>
-// ═══════════════════════════════════════════════
-//  ASISTENTE IA — chat flotante
-// ═══════════════════════════════════════════════
-let iaHistorial = [];
-let iaEnviando = false;
-
-function toggleIAChat(){
-  const panel = document.getElementById('iaChatPanel');
-  panel.classList.toggle('open');
-  if(panel.classList.contains('open')) document.getElementById('iaChatInput').focus();
-}
-
-function iaAgregarMsg(texto, tipo){
-  const body = document.getElementById('iaChatBody');
-  const div = document.createElement('div');
-  div.className = 'ia-msg ' + (tipo==='user' ? 'ia-msg-user' : tipo==='error' ? 'ia-msg-error' : 'ia-msg-bot');
-  div.textContent = texto;
-  body.appendChild(div);
-  body.scrollTop = body.scrollHeight;
-  return div;
-}
-
-async function enviarIAChat(){
-  if(iaEnviando) return;
-  const input = document.getElementById('iaChatInput');
-  const pregunta = input.value.trim();
-  if(!pregunta) return;
-
-  iaAgregarMsg(pregunta, 'user');
-  input.value = '';
-  iaEnviando = true;
-  document.getElementById('iaChatSend').disabled = true;
-  const pensando = iaAgregarMsg('Pensando…', 'bot');
-
-  iaHistorial.push({ role:'user', content: pregunta });
-  if(iaHistorial.length > 20) iaHistorial = iaHistorial.slice(-20);
-
-  try{
-    const contexto = (typeof window.getContextoIA === 'function') ? window.getContextoIA() : '';
-    const response = await fetch('/api/proxy', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-5',
-        max_tokens: 600,
-        system: `Sos el asistente de la Planilla de Control Unificada de las agencias AGE 18, 19, 21, 22, 23, 24, 25 y SIEMPRE MONO. Respondé en español, corto y directo, usando únicamente los datos que te paso a continuación (incluyen el día visible en pantalla y el acumulado de todo el mes, día por día). Si te preguntan por una fecha o un mes que no está en estos datos, decilo claramente en vez de inventar una respuesta.\n\n${contexto}`,
-        messages: iaHistorial
-      })
-    });
-    const data = await response.json();
-    pensando.remove();
-    if(!response.ok || data.error){
-      iaAgregarMsg('Error: ' + (data.error?.message || 'no se pudo obtener respuesta.'), 'error');
-      iaHistorial.pop();
-    } else {
-      const texto = data.content?.[0]?.text || 'No pude generar una respuesta.';
-      iaAgregarMsg(texto, 'bot');
-      iaHistorial.push({ role:'assistant', content: texto });
-    }
-  } catch(e){
-    pensando.remove();
-    iaAgregarMsg('Error de conexión: ' + e.message, 'error');
-    iaHistorial.pop();
-  } finally {
-    iaEnviando = false;
-    document.getElementById('iaChatSend').disabled = false;
-    input.focus();
-  }
-}
-
-document.getElementById('iaChatInput').addEventListener('keydown', function(e){
-  if(e.key === 'Enter') enviarIAChat();
-});
 </script>
 </body>
 </html>
