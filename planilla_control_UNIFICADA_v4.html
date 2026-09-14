@@ -1332,11 +1332,51 @@ function updateResumen(){
 // ═══════════════════════════════════════════════
 //  CONTEXTO PARA ASISTENTE IA
 // ═══════════════════════════════════════════════
+// Recorre un rango de fechas UNA sola vez, leyendo localStorage/turnosData,
+// y devuelve tanto el acumulado por agencia como el detalle día por día
+// (todas las agencias sumadas). Misma lógica que calcRango, pero en un solo pase.
+function buildResumenRangoIA(desde, hasta){
+  const cache={};
+  STORE_KEYS.forEach(sk=>{ cache[sk]=getAllManual(sk); });
+  const turnosCache=getTurnosData();
+  const agTotals={};
+  AGENTS.forEach(ag=>{ agTotals[ag.id]={gan:0,perd:0,desc:0,sueldo:0}; });
+  const porDia=[];
+  let cur=new Date(desde); cur.setHours(0,0,0,0);
+  const fin=new Date(hasta); fin.setHours(0,0,0,0);
+  while(cur<=fin){
+    const dk=dateKey2(cur);
+    let dGan=0, dPerd=0, dDesc=0;
+    AGENTS.forEach(ag=>{
+      const dayData=cache[ag.storeKey][dk];
+      const agDay=dayData?.[ag.id];
+      SHIFTS.forEach(sh=>{
+        const shDay=agDay?.[sh.key]||{};
+        const g=pn(shDay.gan||0), p=pn(shDay.perd||0);
+        let d=pn(shDay.desc||0);
+        if(!d){
+          const rawTurnos=turnosCache[ag.turnosKey]?.[dk]?.[sh.turnosKey]||{};
+          d=numVal(rawTurnos.descartes||0);
+        }
+        const tieneDatos = g!==0 || p!==0 || d!==0 || pn(shDay.carga||0)!==0 || pn(shDay.retiro||0)!==0;
+        const sue = tieneDatos ? 35000 : 0;
+        agTotals[ag.id].gan+=g; agTotals[ag.id].perd+=p; agTotals[ag.id].desc+=d; agTotals[ag.id].sueldo+=sue;
+        dGan+=g; dPerd+=p; dDesc+=d;
+      });
+    });
+    if(dGan||dPerd||dDesc) porDia.push({ fecha:fmtFecha(cur), gan:dGan, perd:dPerd, desc:dDesc });
+    cur=addDias(cur,1);
+  }
+  return { agTotals, porDia };
+}
+
 function buildContextoIA(){
   const f=n=>Math.round(n).toLocaleString('es-AR');
   const fecha=document.getElementById('fecha')?.value||dateKey(currentDate);
+
+  // ── Día visible en pantalla, detalle por agencia ──
   let granGan=0, granPerd=0, granDesc=0, granRetiro=0, granCarga=0, granSueldo=0;
-  const lineas=AGENTS.map(ag=>{
+  const lineasDia=AGENTS.map(ag=>{
     let gan=0, perd=0, desc=0, retiro=0, carga=0, sueldo=0;
     SHIFTS.forEach(sh=>{
       gan+=getVal(ag.id,sh.key,'gan'); perd+=getVal(ag.id,sh.key,'perd');
@@ -1347,11 +1387,34 @@ function buildContextoIA(){
     const neto=gan-perd;
     return `- ${ag.label}: ganancia ${f(gan)}, pérdida ${f(perd)}, neto ${neto>=0?'+':''}${f(neto)}, descartes ${f(desc)}, retiros ${f(retiro)}, cargas ${f(carga)}, sueldo ${f(sueldo)}`;
   });
-  const netoGrand=granGan-granPerd;
-  return `Fecha visible en la planilla: ${fecha}\n`+
-    `Datos por agente (suma de turnos TM+TT+TN):\n${lineas.join('\n')}\n\n`+
-    `TOTAL GENERAL DEL DÍA: ganancia ${f(granGan)}, pérdida ${f(granPerd)}, neto ${netoGrand>=0?'+':''}${f(netoGrand)}, `+
-    `descartes ${f(granDesc)}, retiros ${f(granRetiro)}, cargas de fichas ${f(granCarga)}, sueldos ${f(granSueldo)}.`;
+  const netoGrandDia=granGan-granPerd;
+
+  // ── Mes completo de la fecha visible: acumulado por agencia + detalle día por día ──
+  const inicioMes=primerDiaMes(currentDate), finMes=ultimoDiaMes(currentDate);
+  const mesLbl=`${MESES_ES[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+  const { agTotals, porDia } = buildResumenRangoIA(inicioMes, finMes);
+
+  const lineasMes=AGENTS.map(ag=>{
+    const t=agTotals[ag.id]; const n=t.gan-t.perd;
+    return `- ${ag.label}: ganancia ${f(t.gan)}, pérdida ${f(t.perd)}, neto ${n>=0?'+':''}${f(n)}, descartes ${f(t.desc)}, sueldo ${f(t.sueldo)}`;
+  });
+  let granGanMes=0, granPerdMes=0, granDescMes=0;
+  AGENTS.forEach(ag=>{ granGanMes+=agTotals[ag.id].gan; granPerdMes+=agTotals[ag.id].perd; granDescMes+=agTotals[ag.id].desc; });
+  const netoMes=granGanMes-granPerdMes;
+
+  const lineasPorDia=porDia.map(d=>{
+    const n=d.gan-d.perd;
+    return `  ${d.fecha}: ganancia ${f(d.gan)}, pérdida ${f(d.perd)}, neto ${n>=0?'+':''}${f(n)}, descartes ${f(d.desc)}`;
+  });
+
+  return `Fecha visible en la planilla: ${fecha}\n\n`+
+    `── DÍA VISIBLE (suma de turnos TM+TT+TN) ──\n${lineasDia.join('\n')}\n\n`+
+    `TOTAL DEL DÍA VISIBLE: ganancia ${f(granGan)}, pérdida ${f(granPerd)}, neto ${netoGrandDia>=0?'+':''}${f(netoGrandDia)}, `+
+    `descartes ${f(granDesc)}, retiros ${f(granRetiro)}, cargas de fichas ${f(granCarga)}, sueldos ${f(granSueldo)}.\n\n`+
+    `── ACUMULADO DE ${mesLbl.toUpperCase()} POR AGENCIA (todo el mes) ──\n${lineasMes.join('\n')}\n\n`+
+    `TOTAL DEL MES: ganancia ${f(granGanMes)}, pérdida ${f(granPerdMes)}, neto ${netoMes>=0?'+':''}${f(netoMes)}, descartes ${f(granDescMes)}.\n\n`+
+    `── DETALLE DÍA POR DÍA DE ${mesLbl.toUpperCase()} (todas las agencias sumadas) ──\n${lineasPorDia.length?lineasPorDia.join('\n'):'  Sin datos cargados en este mes.'}\n\n`+
+    `(Si te preguntan por un mes distinto al visible, avisá que solo tenés cargado ${mesLbl}.)`;
 }
 window.getContextoIA = buildContextoIA;
 
@@ -3332,7 +3395,7 @@ async function enviarIAChat(){
       body: JSON.stringify({
         model: 'claude-sonnet-5',
         max_tokens: 600,
-        system: `Sos el asistente de la Planilla de Control Unificada de las agencias AGE 18, 19, 21, 22, 23, 24, 25 y SIEMPRE MONO. Respondé en español, corto y directo, usando únicamente los datos que te paso a continuación. Si te preguntan algo que no está en estos datos, decilo claramente en vez de inventar una respuesta.\n\n${contexto}`,
+        system: `Sos el asistente de la Planilla de Control Unificada de las agencias AGE 18, 19, 21, 22, 23, 24, 25 y SIEMPRE MONO. Respondé en español, corto y directo, usando únicamente los datos que te paso a continuación (incluyen el día visible en pantalla y el acumulado de todo el mes, día por día). Si te preguntan por una fecha o un mes que no está en estos datos, decilo claramente en vez de inventar una respuesta.\n\n${contexto}`,
         messages: iaHistorial
       })
     });
