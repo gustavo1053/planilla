@@ -367,7 +367,7 @@
 <div id="ggTooltipFloat">
   <div class="gg-tit">📝 NOVEDADES GASTO GUS</div>
   <textarea id="gastoGusNota" placeholder="Escribí acá las novedades del día..." oninput="saveGastoGusNota()"></textarea>
-  <div class="gg-hint">Se guarda solo. El monto suma directo al TOTAL GENERAL de SUELDO (misma lógica que SUELDO). Las novedades se incluyen en el Excel y el Excel Mini.</div>
+  <div class="gg-hint">Se guarda solo. El monto se muestra aparte y no se suma a SUELDO. Las novedades se incluyen en el Excel y el Excel Mini.</div>
 </div>
 
 <div class="top-bar">
@@ -1173,9 +1173,6 @@ function recalcAll(){
       }
     });
   });
-  // GASTO GUS: misma lógica que SUELDO — suma directo al TOTAL GENERAL de SUELDO
-  const gastoGusVal=pn(document.getElementById('gastoGusInput')?.value||'');
-  grand.sueldo += gastoGusVal;
   SF.forEach(f=>{
     const el=document.getElementById(`tot_${f}`); if(!el) return;
     const v=grand[f];
@@ -1559,9 +1556,8 @@ function exportMini(){
     ['verif','bonos','desc','colabp','colabre','sueldo','extras'].forEach(f=>{ grand[f]+=sub[f]; });
   });
 
-  // GASTO GUS: misma lógica que SUELDO — suma directo al TOTAL GENERAL de SUELDO
+  // GASTO GUS: monto aparte, NO se suma al TOTAL de SUELDO
   const gastoGusVal=pn(document.getElementById('gastoGusInput')?.value);
-  grand.sueldo += gastoGusVal;
 
   const gl=grand.verif;
   xls+=`<tr><td colspan="2" class="tot-lbl">TOTAL GENERAL</td>`;
@@ -1692,7 +1688,6 @@ function exportPlanilla(){
   });
   const gl=grand.verif, gn=grand.gan-grand.perd;
   const gastoGusVal=pn(document.getElementById('gastoGusInput')?.value);
-  grand.sueldo += gastoGusVal;
   xls+=`<tr><td colspan="2" class="tot-lbl">TOTAL GENERAL</td><td class="${gl>0?'tot-liqp':gl<0?'tot-liqn':'tot-liq0'}">${gl!==0?fmtXS2(gl):'OK'}</td>${grand.gan?`<td class="tot-gan">${fmtX(grand.gan)}</td>`:`<td class="tot"></td>`}${grand.perd?`<td class="tot-prd">${fmtX(grand.perd)}</td>`:`<td class="tot"></td>`}<td class="${gn>=0?'tot-neto-pos':'tot-neto-neg'}">${gn!==0?(gn>=0?'+':'')+fmtX(Math.abs(gn)):''}</td>${['carga','retiro','bonos','desc','colabp','colabre','sueldo','pprem'].map(f=>grand[f]?`<td class="tot-num">${fmtX(Math.abs(grand[f]))}</td>`:`<td class="tot"></td>`).join('')}<td class="tot"></td></tr>`;
   if(gastoGusVal){
     xls+=`<tr><td colspan="2" class="tot-lbl">GASTO GUS</td><td colspan="${COLS-2}" class="tot-num" style="text-align:right;">${fmtX(Math.abs(gastoGusVal))}</td></tr>`;
